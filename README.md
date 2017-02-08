@@ -7,7 +7,7 @@ Copyright (c) 2017, OnkiBOT Team <<http://www.onkibot.com/>>
 Source
 ------
 The latest and greatest source can be found on [GitHub].  
-Current build status: ![Build Status](https://circleci.com/gh/onkibot/onkibot-backend/tree/master.svg?style=svg)
+Current build status: [![Build Status](https://circleci.com/gh/onkibot/onkibot-backend/tree/master.svg?style=svg)](https://circleci.com/gh/onkibot/onkibot-backend/)
 
 License
 -------
