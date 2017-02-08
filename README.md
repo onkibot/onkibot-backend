@@ -1,7 +1,3 @@
-
-[![CircleCI](https://circleci.com/gh/onkibot/onkibot-backend/tree/master.svg?style=svg)](https://circleci.com/gh/onkibot/onkibot-backend/tree/master)
-
-
 [OnkiBOT Backend][Website]
 ===================================
 Description to be added...
