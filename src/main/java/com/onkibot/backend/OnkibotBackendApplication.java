@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 
 @SpringBootApplication(exclude = SessionAutoConfiguration.class)
-public class BootReactApplication {
+public class OnkibotBackendApplication {
 
   public static void main(String[] args) {
-    SpringApplication.run(BootReactApplication.class, args);
+    SpringApplication.run(OnkibotBackendApplication.class, args);
   }
 }
