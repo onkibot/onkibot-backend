@@ -1,4 +1,4 @@
-package react
+package com.onkibot.backend
 
 import org.springframework.boot.test.SpringApplicationContextLoader
 import org.springframework.session.MapSessionRepository
@@ -15,7 +15,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 
 @ContextConfiguration(
   loader = SpringApplicationContextLoader,
-  classes = [BootReactApplication]
+  classes = [OnkibotBackendApplication]
 )
 abstract class AbstractMvcSpec extends SpockMvcSpec {
 

@@ -18,7 +18,7 @@ apply plugin: 'spring-boot'
 apply plugin: 'docker'
 
 jar {
-  baseName = 'boot-react'
+  baseName = 'onkibot-backend'
   version = '0.0.1-SNAPSHOT'
 }
 sourceCompatibility = 1.8
@@ -51,25 +51,3 @@ eclipse {
     containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
   }
 }
-
-jar {
-  from('../frontend/dist') {
-    into 'static'
-  }
-}
-
-jar.dependsOn(':frontend:assemble')
-
-task buildDocker(type: Docker) {
-  baseImage = 'develar/java:latest'
-  push = false
-  tag = 'geowarin/boot-react'
-  addFile {
-    from jar
-    rename {'app.jar'}
-  }
-  entryPoint(['java', '-Djava.security.egd=file:/dev/./urandom', '-jar', '/app.jar'])
-  exposePort(8080)
-}
-
-buildDocker.dependsOn(build)

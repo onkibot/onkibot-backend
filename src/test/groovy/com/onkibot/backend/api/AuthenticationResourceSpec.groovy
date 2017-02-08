@@ -1,7 +1,7 @@
-package react.api
+package com.onkibot.backend.api
 
 import org.springframework.http.HttpStatus
-import react.AbstractMvcSpec
+import com.onkibot.backend.AbstractMvcSpec
 import spock.lang.Shared
 import spock.lang.Stepwise
 import spockmvc.RequestParams
