@@ -1,5 +1,0 @@
-deployment:
-  production: 
-    branch: master
-    commands:
-      - ssh ${SSH_USERNAME}@${SSH_HOST} "${SSH_COMMAND}"
