@@ -1,2 +1,4 @@
 #!/bin/bash
-echo "Hello world!"
+#git fetch --all
+#git reset --hard origin/master
+#docker-compose build
