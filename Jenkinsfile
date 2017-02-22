@@ -1,19 +1,19 @@
 pipeline {
-  agent { docker 'java:8' }
+  agent any
   stages {
-    stage('checkout project') {
+    stage('Checkout Project') {
       steps {
         git url: 'https://github.com/onkibot/onkibot-backend.git'
       }
     }
 
-    stage('check env') {
+    stage('Check Envoirment') {
       steps {
         sh 'java -version'
       }
     }
 
-    stage('gradle dependencies') {
+    stage('Gradle Dependencies') {
       steps {
         sh '''
         export TERM="dumb"
@@ -22,7 +22,7 @@ pipeline {
       }
     }
 
-    stage('gradle test') {
+    stage('Gradle Test') {
       steps {
         sh '''
         export TERM="dumb"
@@ -30,5 +30,13 @@ pipeline {
         '''
       }
     }
+
+    stage('Build Docker Services') {
+      steps {
+        sh 'docker-compose down'
+        sh 'docker-compose up --force-recreate -d'
+      }
+    }
   }
 }
+
