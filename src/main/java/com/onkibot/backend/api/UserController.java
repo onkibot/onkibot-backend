@@ -4,7 +4,6 @@ import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.UserRepository;
 import com.onkibot.backend.models.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;

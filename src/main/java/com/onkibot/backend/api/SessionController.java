@@ -1,6 +1,7 @@
 package com.onkibot.backend.api;
 
 import com.onkibot.backend.database.repositories.UserRepository;
+import com.onkibot.backend.models.CredentialsModel;
 import com.onkibot.backend.models.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,13 +24,12 @@ public class SessionController {
 
     @RequestMapping(method = RequestMethod.POST)
     public UserModel login(
-            @RequestParam String email,
-            @RequestParam String password,
+            @RequestBody CredentialsModel credentials,
             HttpSession session
     ) {
-        Authentication authentication = new UsernamePasswordAuthenticationToken(email, password);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword());
         SecurityContextHolder.getContext().setAuthentication(authenticationManager.authenticate(authentication));
-        UserModel userModel = new UserModel(userRepository.findByEmail(email));
+        UserModel userModel = new UserModel(userRepository.findByEmail(credentials.getEmail()));
         session.setAttribute("user", userModel);
         return userModel;
     }
