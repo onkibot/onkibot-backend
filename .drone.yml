@@ -1,0 +1,28 @@
+pipeline:
+  # restores the cache from a local volume
+  restore-cache:
+    image: drillster/drone-volume-cache
+    restore: true
+    mount: [ /drone/.gradle, /drone/.m2 ]
+    volumes: /tmp/cache:/cache
+
+  build:
+    image: java:8
+    commands:
+      - java -version
+      - ./gradlew dependencies
+      - ./gradlew test
+
+  # rebuild the cache in case new dependencies were downloaded
+  rebuild-cache:
+    image: drillster/drone-volume-cache
+    rebuild: true
+    mount: [ /drone/.gradle, /drone/.m2 ]
+    volumes: /tmp/cache:/cache
+
+services:
+  database:
+    image: mysqll
+    environment:
+      - MYSQL_DATABASE=test
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
