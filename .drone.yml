@@ -19,10 +19,3 @@ pipeline:
     rebuild: true
     mount: [ /drone/.gradle, /drone/.m2 ]
     volumes: /tmp/cache:/cache
-
-services:
-  database:
-    image: mysql
-    environment:
-      - MYSQL_DATABASE=test
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
