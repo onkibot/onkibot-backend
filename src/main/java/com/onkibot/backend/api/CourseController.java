@@ -9,13 +9,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/course")
 public class CourseController {
     @Autowired
     private CourseRepository courseRepository;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET, params = {"courseId"})
     public CourseModel get(
             @RequestParam int courseId
     ) {
@@ -25,5 +28,12 @@ public class CourseController {
         } else {
             return null;
         }
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public List<CourseModel> getAll() {
+        ArrayList<CourseModel> models = new ArrayList<>();
+        courseRepository.findAll().forEach(course -> models.add(new CourseModel(course)));
+        return models;
     }
 }
