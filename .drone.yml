@@ -12,18 +12,7 @@ pipeline:
       - java -version
       - ./gradlew dependencies
       - ./gradlew test
-    development:
-      commands:
-        - docker-compose -f docker-compose.dev.yml build web
-        - docker-compose -f docker-compose.dev.yml -p onkibot-backend-dev up --no-deps -d web
-      when:
-        branch: development
-    production:
-      commands:
-        - docker-compose -f docker-compose.prod.yml build web
-        - docker-compose -f docker-compose.prod.yml -p onkibot-backend-prod up --no-deps -d web
-      when:
-        branch: master
+      - ./deploy.sh
 
   # rebuild the cache in case new dependencies were downloaded
   rebuild-cache:
