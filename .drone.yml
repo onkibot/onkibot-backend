@@ -14,7 +14,7 @@ pipeline:
       - /var/run/docker.sock:/var/run/docker.sock
 
   development:
-    image: docker:1.13.1
+    image: docker/compose:1.8.1
     commands:
       - docker-compose -f docker-compose.dev.yml build web
       - docker-compose -f docker-compose.dev.yml -p onkibot-backend-dev up --no-deps -d web
@@ -24,7 +24,7 @@ pipeline:
       branch: development
 
   production:
-    image: docker:1.13.1
+    image: docker/compose:1.8.1
     commands:
       - docker-compose -f docker-compose.prod.yml build web
       - docker-compose -f docker-compose.prod.yml -p onkibot-backend-prod up --no-deps -d web
