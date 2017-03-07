@@ -7,12 +7,12 @@ pipeline:
     volumes: /tmp/cache:/cache
 
   build:
-    image: java:8
+    image: docker:1.13.1
     commands:
-      - java -version
-      - ./gradlew dependencies
-      - ./gradlew test
+      - docker ps
       - ./deploy.sh
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
   # rebuild the cache in case new dependencies were downloaded
   rebuild-cache:
