@@ -6,27 +6,24 @@ pipeline:
     mount: [ /drone/.gradle, /drone/.m2 ]
     volumes: /tmp/cache:/cache
 
-  build-production:
+  build:
     image: java:8
     commands:
       - java -version
       - ./gradlew dependencies
       - ./gradlew test
-      - docker-compose -f docker-compose.prod.yml build web
-      - docker-compose -f docker-compose.prod.yml -p onkibot-backend-prod up --no-deps -d web
-     when:
-       branch: master
-
-  build-development:
-    image: java:8
-    commands:
-      - java -version
-      - ./gradlew dependencies
-      - ./gradlew test
-      - docker-compose -f docker-compose.dev.yml build web
-      - docker-compose -f docker-compose.dev.yml -p onkibot-backend-dev up --no-deps -d web
-     when:
-       branch: development
+    development:
+      commands:
+        - docker-compose -f docker-compose.dev.yml build web
+        - docker-compose -f docker-compose.dev.yml -p onkibot-backend-dev up --no-deps -d web
+      when:
+        branch: development
+    production:
+      commands:
+        - docker-compose -f docker-compose.prod.yml build web
+        - docker-compose -f docker-compose.prod.yml -p onkibot-backend-prod up --no-deps -d web
+      when:
+        branch: master
 
   # rebuild the cache in case new dependencies were downloaded
   rebuild-cache:
