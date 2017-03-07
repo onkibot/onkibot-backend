@@ -1,4 +1,9 @@
 pipeline:
+  test:
+    image: java:8
+    commands:
+      - java -version
+      - ./gradlew test
   build:
     image: docker:1.13.1
     commands:
