@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/api/signup")
+@RequestMapping("/api/v1/signup")
 public class SignupController {
     @Autowired
     private UserRepository userRepository;

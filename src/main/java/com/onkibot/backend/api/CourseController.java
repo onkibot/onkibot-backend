@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/course")
+@RequestMapping("/api/v1/courses")
 public class CourseController {
     @Autowired
     private CourseRepository courseRepository;
