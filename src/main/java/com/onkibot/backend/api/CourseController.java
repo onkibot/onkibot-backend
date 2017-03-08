@@ -2,12 +2,13 @@ package com.onkibot.backend.api;
 
 import com.onkibot.backend.database.entities.Course;
 import com.onkibot.backend.database.repositories.CourseRepository;
+import com.onkibot.backend.models.CourseInputModel;
 import com.onkibot.backend.models.CourseModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/course")
@@ -15,7 +16,7 @@ public class CourseController {
     @Autowired
     private CourseRepository courseRepository;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET, params = {"courseId"})
     public CourseModel get(
             @RequestParam int courseId
     ) {
@@ -25,5 +26,27 @@ public class CourseController {
         } else {
             return null;
         }
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public List<CourseModel> getAll() {
+        ArrayList<CourseModel> models = new ArrayList<>();
+        courseRepository.findAll().forEach(course -> models.add(new CourseModel(course)));
+        return models;
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public CourseModel post(
+            @RequestBody CourseInputModel courseInput
+    ) {
+        Course course = courseRepository.save(new Course(courseInput.getName(), courseInput.getDescription()));
+        return new CourseModel(course);
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE)
+    public void delete(
+            @RequestParam int courseId
+    ) {
+        courseRepository.delete(courseId);
     }
 }
