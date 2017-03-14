@@ -1,21 +1,32 @@
 pipeline:
-  # restores the cache from a local volume
-  restore-cache:
-    image: drillster/drone-volume-cache
-    restore: true
-    mount: [ /drone/.gradle, /drone/.m2 ]
-    volumes: /tmp/cache:/cache
-
-  build:
+  test:
     image: java:8
     commands:
       - java -version
-      - ./gradlew dependencies
       - ./gradlew test
+  build:
+    image: docker:1.13.1
+    commands:
+      - docker ps
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
-  # rebuild the cache in case new dependencies were downloaded
-  rebuild-cache:
-    image: drillster/drone-volume-cache
-    rebuild: true
-    mount: [ /drone/.gradle, /drone/.m2 ]
-    volumes: /tmp/cache:/cache
+  development:
+    image: docker/compose:1.8.1
+    commands:
+      - docker-compose -f docker-compose.dev.yml build web
+      - docker-compose -f docker-compose.dev.yml -p onkibot-backend-dev up -d web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    when:
+      branch: development
+
+  production:
+    image: docker/compose:1.8.1
+    commands:
+      - docker-compose -f docker-compose.prod.yml build web
+      - docker-compose -f docker-compose.prod.yml -p onkibot-backend-prod up -d web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    when:   
+      branch: master
