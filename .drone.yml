@@ -14,6 +14,8 @@ pipeline:
   development:
     image: docker/compose:1.8.1
     commands:
+      - echo "DOCKER_HOST_IP=$(/sbin/ip route | awk '/default/ { print $3 }')" > .env
+      - echo "DOCKER_HOST_DB_PORT=3307" >> .env
       - docker-compose -f docker-compose.dev.yml build web
       - docker-compose -f docker-compose.dev.yml -p onkibot-backend-dev up -d web
     volumes:
@@ -24,6 +26,8 @@ pipeline:
   production:
     image: docker/compose:1.8.1
     commands:
+      - echo "DOCKER_HOST_IP=$(/sbin/ip route | awk '/default/ { print $3 }')" > .env
+      - echo "DOCKER_HOST_DB_PORT=3307" >> .env
       - docker-compose -f docker-compose.prod.yml build web
       - docker-compose -f docker-compose.prod.yml -p onkibot-backend-prod up -d web
     volumes:

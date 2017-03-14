@@ -9,10 +9,13 @@ services:
       - '127.0.0.1:8080:8080'
     depends_on:
       - db
+    environment:
+      - DOCKER_HOST_IP=${DOCKER_HOST_IP}
+      - DOCKER_HOST_DB_PORT=3306
   db:
     image: mysql
     ports:
-      - '127.0.0.1:3306:3306'
+      - '3306:3306'
     volumes:
       - db_data:/var/lib/mysql
     restart: always
