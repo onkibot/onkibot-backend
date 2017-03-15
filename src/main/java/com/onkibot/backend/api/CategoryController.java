@@ -51,7 +51,7 @@ public class CategoryController {
     private Category assertCourseCategory(int courseId, int categoryId) {
         Course course = assertCourse(courseId);
         Category category = categoryRepository.findByCategoryId(categoryId).orElseThrow(() -> new CategoryNotFoundException(categoryId));
-        if (category.getCourse().getCourseId().equals(course.getCourseId())) {
+        if (!category.getCourse().getCourseId().equals(course.getCourseId())) {
             throw new CategoryNotFoundException(categoryId);
         }
         return category;
