@@ -2,7 +2,7 @@ spring.devtools.livereload.enabled: false
 
 spring:
     datasource:
-        url: jdbc:mysql://${DOCKER_HOST}/onkibot
+        url: jdbc:mysql://${DOCKER_HOST_IP}:${DOCKER_HOST_DB_PORT}/onkibot
         username: onkibot
         password: onkibot
         platform: mysql
