@@ -37,7 +37,7 @@ public class SessionController {
     @RequestMapping(method = RequestMethod.GET)
     public UserModel session(HttpSession session) {
         int userId = (int) session.getAttribute("userId");
-        User user = userRepository.findByUserId().orElseThrow(() -> new UserNotFoundException(userId));
+        User user = userRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException(userId));
         return new UserModel(user);
     }
 
