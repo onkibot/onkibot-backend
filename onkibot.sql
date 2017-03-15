@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS user(
         user_id                 INT             PRIMARY KEY     AUTO_INCREMENT,
         email                   VARCHAR(100)    NOT NULL UNIQUE,
         encoded_password        CHAR(60)        NOT NULL,
-        name                    VARCHAR(20)     NOT NULL UNIQUE,
+        name                    VARCHAR(20)     NOT NULL,
         created_time            DATETIME        NOT NULL,
         is_instructor           BOOL            NOT NULL
 );
