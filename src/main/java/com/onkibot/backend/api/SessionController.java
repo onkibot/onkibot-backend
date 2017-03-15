@@ -20,7 +20,6 @@ public class SessionController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @RequestMapping(method = RequestMethod.POST)
     public UserModel login(
@@ -29,7 +28,7 @@ public class SessionController {
     ) {
         Authentication authentication = new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword());
         SecurityContextHolder.getContext().setAuthentication(authenticationManager.authenticate(authentication));
-        UserModel userModel = new UserModel(userRepository.findByEmail(credentials.getEmail()));
+        UserModel userModel = new UserModel(userRepository.findByEmail(credentials.getEmail()).get());
         session.setAttribute("user", userModel);
         return userModel;
     }

@@ -2,6 +2,7 @@ package com.onkibot.backend.api;
 
 import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.UserRepository;
+import com.onkibot.backend.exceptions.EmailInUseException;
 import com.onkibot.backend.models.SignupInfoModel;
 import com.onkibot.backend.models.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class SignupController {
     ) {
         // Always encode the password to introduce delay
         String encodedPassword = passwordEncoder.encode(signupInfo.getPassword());
-        if (userRepository.findByEmail(signupInfo.getEmail()) == null) {
+        if (!userRepository.findByEmail(signupInfo.getEmail()).isPresent()) {
             User user = userRepository.save(new User(signupInfo.getEmail(), encodedPassword, signupInfo.getName(), signupInfo.getIsInstructor()));
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(signupInfo.getEmail(), signupInfo.getPassword());
@@ -40,7 +41,7 @@ public class SignupController {
             session.setAttribute("user", userModel);
             return userModel;
         } else {
-            return null;
+            throw new EmailInUseException(signupInfo.getEmail());
         }
     }
 }

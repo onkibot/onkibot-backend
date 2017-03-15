@@ -2,7 +2,10 @@ package com.onkibot.backend.database.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 public class User implements Serializable {
@@ -24,6 +27,10 @@ public class User implements Serializable {
     @Column(nullable = false)
     private boolean isInstructor;
 
+    @ManyToMany
+    @JoinTable(name = "attends")
+    private List<Course> attending;
+
     protected User() { }
 
     public User(String email, String encodedPassword, String name, boolean isInstructor) {
@@ -32,6 +39,7 @@ public class User implements Serializable {
         this.name = name;
         this.createdTime = new Date();
         this.isInstructor = isInstructor;
+        this.attending = new ArrayList<>();
     }
 
     public Integer getUserId() {
@@ -56,5 +64,9 @@ public class User implements Serializable {
 
     public boolean getIsInstructor() {
         return isInstructor;
+    }
+
+    public List<Course> getAttending() {
+        return attending;
     }
 }
