@@ -21,6 +21,7 @@ public class UserModel {
 
     public UserModel(User entity) {
         this(entity.getUserId(), entity.getEmail(), entity.getName(), entity.getCreatedTime(), entity.getIsInstructor());
+        System.out.println(entity.getResources());
     }
 
     public int getUserId() {
