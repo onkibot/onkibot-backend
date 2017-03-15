@@ -2,7 +2,9 @@ package com.onkibot.backend.database.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -27,7 +29,7 @@ public class User implements Serializable {
 
     @ManyToMany
     @JoinTable(name = "attends")
-    private Set<Course> attending;
+    private List<Course> attending;
 
     protected User() { }
 
@@ -37,6 +39,7 @@ public class User implements Serializable {
         this.name = name;
         this.createdTime = new Date();
         this.isInstructor = isInstructor;
+        this.attending = new ArrayList<>();
     }
 
     public Integer getUserId() {
@@ -63,7 +66,7 @@ public class User implements Serializable {
         return isInstructor;
     }
 
-    public Set<Course> getAttending() {
+    public List<Course> getAttending() {
         return attending;
     }
 }
