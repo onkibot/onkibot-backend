@@ -2,6 +2,8 @@ package com.onkibot.backend.database.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Category implements Serializable {
@@ -18,12 +20,16 @@ public class Category implements Serializable {
     @Column(nullable = false)
     private String description;
 
+    @OneToMany(mappedBy = "category")
+    private List<Resource> resources;
+
     protected Category() { }
 
     public Category(Course course, String name, String description) {
         this.course = course;
         this.name = name;
         this.description = description;
+        this.resources = new ArrayList<>();
     }
 
     public Integer getCategoryId() {
@@ -40,5 +46,9 @@ public class Category implements Serializable {
 
     public String getDescription() {
         return description;
+    }
+
+    public List<Resource> getResources() {
+        return resources;
     }
 }
