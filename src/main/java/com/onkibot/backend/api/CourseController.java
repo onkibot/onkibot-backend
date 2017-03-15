@@ -2,9 +2,12 @@ package com.onkibot.backend.api;
 
 import com.onkibot.backend.database.entities.Course;
 import com.onkibot.backend.database.repositories.CourseRepository;
+import com.onkibot.backend.exceptions.CourseNotFoundException;
 import com.onkibot.backend.models.CourseInputModel;
 import com.onkibot.backend.models.CourseModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -16,16 +19,10 @@ public class CourseController {
     @Autowired
     private CourseRepository courseRepository;
 
-    @RequestMapping(method = RequestMethod.GET, params = {"courseId"})
-    public CourseModel get(
-            @RequestParam int courseId
-    ) {
-        Course course = courseRepository.findOne(courseId);
-        if (course != null) {
-            return new CourseModel(course);
-        } else {
-            return null;
-        }
+    @RequestMapping(method = RequestMethod.GET, value = "/{courseId}")
+    public CourseModel get(@PathVariable int courseId) {
+        Course course = assertCourse(courseId);
+        return new CourseModel(course);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -36,17 +33,19 @@ public class CourseController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public CourseModel post(
-            @RequestBody CourseInputModel courseInput
-    ) {
+    public ResponseEntity<CourseModel> post(@RequestBody CourseInputModel courseInput) {
         Course course = courseRepository.save(new Course(courseInput.getName(), courseInput.getDescription()));
-        return new CourseModel(course);
+        return new ResponseEntity<>(new CourseModel(course), HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
-    public void delete(
-            @RequestParam int courseId
-    ) {
-        courseRepository.delete(courseId);
+    public ResponseEntity<Void> delete(@RequestParam int courseId) {
+        Course course = assertCourse(courseId);
+        courseRepository.delete(course);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    private Course assertCourse(int courseId) {
+        return this.courseRepository.findByCourseId(courseId).orElseThrow(() -> new CourseNotFoundException(courseId));
     }
 }

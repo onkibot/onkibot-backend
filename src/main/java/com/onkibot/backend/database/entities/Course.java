@@ -1,7 +1,8 @@
 package com.onkibot.backend.database.entities;
 
 import javax.persistence.*;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -15,11 +16,19 @@ public class Course {
     @Column(nullable = false)
     private String description;
 
+    @OneToMany(mappedBy = "course")
+    private List<Category> categories;
+
+    @ManyToMany(mappedBy = "attending")
+    private List<User> attendees;
+
     protected Course() { }
 
     public Course(String name, String description) {
         this.name = name;
         this.description = description;
+        this.categories = new ArrayList<>();
+        this.attendees = new ArrayList<>();
     }
 
     public Integer getCourseId() {
@@ -32,5 +41,13 @@ public class Course {
 
     public String getDescription() {
         return description;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public List<User> getAttendees() {
+        return attendees;
     }
 }

@@ -3,6 +3,7 @@ package com.onkibot.backend.database.entities;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 public class User implements Serializable {
@@ -23,6 +24,10 @@ public class User implements Serializable {
 
     @Column(nullable = false)
     private boolean isInstructor;
+
+    @ManyToMany
+    @JoinTable(name = "attends")
+    private Set<Course> attending;
 
     protected User() { }
 
@@ -56,5 +61,9 @@ public class User implements Serializable {
 
     public boolean getIsInstructor() {
         return isInstructor;
+    }
+
+    public Set<Course> getAttending() {
+        return attending;
     }
 }

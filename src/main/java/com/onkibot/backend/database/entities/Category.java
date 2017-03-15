@@ -1,17 +1,16 @@
 package com.onkibot.backend.database.entities;
 
-import com.onkibot.backend.database.ids.CategoryId;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(
-    name="category"
-)
 public class Category implements Serializable {
-    @EmbeddedId
-    private CategoryId categoryId;
+    @Id @GeneratedValue
+    private Integer categoryId;
+
+    @ManyToOne()
+    @JoinColumn(name = "course_id")
+    private Course course;
 
     @Column(nullable = false)
     private String name;
@@ -21,17 +20,19 @@ public class Category implements Serializable {
 
     protected Category() { }
 
-    public Category(CategoryId categoryId, String name, String description) {
-        this.categoryId = categoryId;
+    public Category(Course course, String name, String description) {
+        this.course = course;
         this.name = name;
         this.description = description;
     }
 
-    public CategoryId getCategoryId() { return categoryId; }
+    public Integer getCategoryId() {
+        return categoryId;
+    }
 
-    public String getSlug() { return categoryId.slug; }
-
-    public Course getCourse() { return categoryId.course; }
+    public Course getCourse() {
+        return course;
+    }
 
     public String getName() {
         return name;
