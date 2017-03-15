@@ -4,6 +4,7 @@ pipeline:
     commands:
       - java -version
       - ./gradlew test
+
   build:
     image: docker:1.13.1
     commands:
@@ -22,6 +23,7 @@ pipeline:
       - /var/run/docker.sock:/var/run/docker.sock
     when:
       branch: development
+      event: push
 
   production:
     image: docker/compose:1.8.1
@@ -34,3 +36,4 @@ pipeline:
       - /var/run/docker.sock:/var/run/docker.sock
     when:   
       branch: master
+      event: push
