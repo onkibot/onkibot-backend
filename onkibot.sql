@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS user(
         user_id                 INT             PRIMARY KEY     AUTO_INCREMENT,
         email                   VARCHAR(100)    NOT NULL UNIQUE,
         encoded_password        CHAR(60)        NOT NULL,
-        name                    VARCHAR(20)     NOT NULL UNIQUE,
+        name                    VARCHAR(20)     NOT NULL,
         created_time            DATETIME        NOT NULL,
         is_instructor           BOOL            NOT NULL
 );
@@ -53,8 +53,24 @@ CREATE TABLE IF NOT EXISTS external_resource(
         external_resource_id            INT             PRIMARY KEY AUTO_INCREMENT,
         resource_id                     INT             NOT NULL,
         url                             VARCHAR(255)    NOT NULL,
+        publisher_user_id               INT             NOT NULL,
         FOREIGN KEY (resource_id)
                 REFERENCES resource(resource_id)
+                ON UPDATE CASCADE,
+        FOREIGN KEY (publisher_user_id)
+                REFERENCES user(user_id)
                 ON UPDATE CASCADE
+
 );
 
+CREATE TABLE IF NOT EXISTS external_resource_rating(
+        external_resource_id            INT                NOT NULL,
+        user_id                         INT                NOT NULL,
+        PRIMARY KEY(external_resource_id, user_id),
+        FOREIGN KEY (external_resource_id)
+                REFERENCES external_resource(external_resource_id)
+                ON UPDATE CASCADE,
+        FOREIGN KEY (user_id)
+                REFERENCES user(user_id)
+                ON UPDATE CASCADE
+);

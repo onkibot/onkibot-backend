@@ -2,6 +2,7 @@ package com.onkibot.backend.api;
 
 import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.UserRepository;
+import com.onkibot.backend.exceptions.UserNotFoundException;
 import com.onkibot.backend.models.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,11 +20,11 @@ public class UserController {
     public UserModel get(
             @RequestParam int userId
     ) {
-        User user = userRepository.findOne(userId);
-        if (user != null) {
-            return new UserModel(user);
-        } else {
-            return null;
-        }
+        User user = assertUser(userId);
+        return new UserModel(user);
+    }
+
+    private User assertUser(int userId) {
+        return this.userRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException(userId));
     }
 }
