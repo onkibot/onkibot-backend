@@ -23,6 +23,10 @@ public class Resource {
     @JoinColumn(name = "publisher_user_id")
     private User publisherUser;
 
+
+    @OneToOne(mappedBy = "resource")
+    private ExternalResource externalResource;
+
     protected Resource() {}
 
     public Resource(Category category, String name, String body, User publisherUser) {
@@ -54,5 +58,13 @@ public class Resource {
 
     public void setPublisherUser(User publisherUser) {
         this.publisherUser = publisherUser;
+    }
+
+    public ExternalResource getExternalResource() {
+        return externalResource;
+    }
+
+    public void setExternalResource(ExternalResource externalResource) {
+        this.externalResource = externalResource;
     }
 }
