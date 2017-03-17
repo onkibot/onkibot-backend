@@ -60,7 +60,6 @@ eclipse {
 
 jacoco {
     toolVersion = "0.7.6.201602180812"
-    reportsDir = file("$buildDir/customJacocoReportDir")
 }
 
 test {
@@ -73,8 +72,9 @@ test {
 
 jacocoTestReport {
     reports {
-        xml.enabled false
+        xml.enabled true
+        xml.destination "${buildDir}/reports/jacoco/report.xml"
+        html.enabled false
         csv.enabled false
-        html.destination "${buildDir}/jacocoHtml"
     }
 }
