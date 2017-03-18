@@ -3,12 +3,17 @@ pipeline:
     image: java:8
     commands:
       - java -version
+      - export DB_HOST=$(/sbin/ip route | awk '/default/ { print $3 }')
+      - export DB_PORT=3307
+      - export DB_ROOT_PASSWORD=onkibot_test
+      - export DB_NAME=onkibot_test
+      - export DB_USERNAME=onkibot_test
+      - export DB_PASSWORD=onkibot_test
       - ./gradlew test
-  when:
-    event: push
-      - ./gradlw jacocoTestReport
       - export CODECOV_TOKEN=$CODECOV_TOKEN
       - bash <(curl -s https://codecov.io/bash)
+  when:
+    event: push
 
   development:
     image: docker/compose:1.8.1
