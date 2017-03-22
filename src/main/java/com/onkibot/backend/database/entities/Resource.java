@@ -2,6 +2,8 @@ package com.onkibot.backend.database.entities;
 
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Resource {
@@ -23,6 +25,9 @@ public class Resource {
     @JoinColumn(name = "publisher_user_id")
     private User publisherUser;
 
+    @ManyToMany(mappedBy = "resource")
+    private List<ExternalResource> externalResources;
+
     protected Resource() {}
 
     public Resource(Category category, String name, String body, User publisherUser) {
@@ -30,6 +35,7 @@ public class Resource {
         this.name = name;
         this.body = body;
         this.publisherUser = publisherUser;
+        this.externalResources = new ArrayList<>();
     }
 
     public Integer getResourceId() {
@@ -54,5 +60,13 @@ public class Resource {
 
     public void setPublisherUser(User publisherUser) {
         this.publisherUser = publisherUser;
+    }
+
+    public List<ExternalResource> getExternalResource() {
+        return externalResources;
+    }
+
+    public void setExternalResource(List<ExternalResource> externalResources) {
+        this.externalResources = externalResources;
     }
 }
