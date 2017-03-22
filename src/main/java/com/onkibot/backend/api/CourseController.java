@@ -1,5 +1,6 @@
 package com.onkibot.backend.api;
 
+import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.Course;
 import com.onkibot.backend.database.repositories.CourseRepository;
 import com.onkibot.backend.exceptions.CourseNotFoundException;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/courses")
+@RequestMapping(OnkibotBackendApplication.API_BASE_URL + "/courses")
 public class CourseController {
     @Autowired
     private CourseRepository courseRepository;

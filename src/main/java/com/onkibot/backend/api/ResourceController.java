@@ -1,5 +1,6 @@
 package com.onkibot.backend.api;
 
+import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.Category;
 import com.onkibot.backend.database.entities.Course;
 import com.onkibot.backend.database.entities.Resource;
@@ -24,7 +25,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/courses/{courseId}/categories/{categoryId}/resources")
+@RequestMapping(OnkibotBackendApplication.API_BASE_URL + "/courses/{courseId}/categories/{categoryId}/resources")
 public class ResourceController {
     @Autowired
     private ResourceRepository resourceRepository;
