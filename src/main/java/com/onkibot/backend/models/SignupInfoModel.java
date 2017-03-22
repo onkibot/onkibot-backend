@@ -4,8 +4,12 @@ public class SignupInfoModel extends CredentialsModel {
     private String name;
     private boolean isInstructor;
 
-    public SignupInfoModel() {
+    protected SignupInfoModel() { }
 
+    public SignupInfoModel(String email, String password, String name, boolean isInstructor) {
+        super(email, password);
+        this.name = name;
+        this.isInstructor = isInstructor;
     }
 
     public String getName() {

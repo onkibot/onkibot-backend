@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CourseModel {
-    private final int courseId;
-    private final String name;
-    private final String description;
-    private final List<CategoryModel> categories;
+    private int courseId;
+    private String name;
+    private String description;
+    private List<CategoryModel> categories;
+
+    protected CourseModel() { }
 
     public CourseModel(Course course) {
         this.courseId = course.getCourseId();

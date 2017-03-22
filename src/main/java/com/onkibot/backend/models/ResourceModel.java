@@ -3,11 +3,13 @@ package com.onkibot.backend.models;
 import com.onkibot.backend.database.entities.Resource;
 
 public class ResourceModel {
-    private final int resourceId;
-    private final int categoryId;
-    private final String name;
-    private final String body;
-    private final UserModel publisherUser;
+    private int resourceId;
+    private int categoryId;
+    private String name;
+    private String body;
+    private UserModel publisherUser;
+
+    protected ResourceModel() { }
 
     public ResourceModel(Resource resource) {
         this.resourceId = resource.getResourceId();

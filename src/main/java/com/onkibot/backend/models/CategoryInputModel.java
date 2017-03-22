@@ -4,7 +4,7 @@ public class CategoryInputModel {
     private String name;
     private String description;
 
-    public CategoryInputModel() { }
+    protected CategoryInputModel() { }
 
     public String getName() {
         return name;
