@@ -1,13 +1,14 @@
 package com.onkibot.backend.database.repositories;
 
 
-import com.onkibot.backend.configuration.RepositoryConfiguration;
+import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -16,12 +17,15 @@ import static org.junit.Assert.*;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(RepositoryConfiguration.class)
+@SpringApplicationConfiguration(OnkibotBackendApplication.class)
 @EnableJpaRepositories
 @WebAppConfiguration
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:./beforeTestRun.sql")
 public class UserRepositoryTest {
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -30,11 +34,13 @@ public class UserRepositoryTest {
 
     @Test
     public void testCreateUser() {
-        // TODO: create an encrypted password string with PasswordEncoder
+        String plaintextPassword = "testPassword123";
+        String encodedPassword = passwordEncoder.encode(plaintextPassword);
+
         // Setup user
         User user = new User(
                 "test@onkibot.com",
-                "TODO",
+                encodedPassword,
                 "OnkiBOT Tester",
                 true
         );
@@ -54,6 +60,7 @@ public class UserRepositoryTest {
         assertEquals(user.getUserId(), fetchedUser.getUserId());
         assertEquals(user.getEmail(), fetchedUser.getEmail());
         assertEquals(user.getName(), fetchedUser.getName());
+        assertEquals(encodedPassword, user.getEncodedPassword());
         assertEquals(user.getEncodedPassword(), fetchedUser.getEncodedPassword());
 
         // Verify the user count in the db

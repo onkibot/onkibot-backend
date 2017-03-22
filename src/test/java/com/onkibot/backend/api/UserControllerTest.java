@@ -11,6 +11,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -18,6 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -28,8 +32,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:./beforeTestRun.sql")
 public class UserControllerTest {
-    private MockMvc mockMvc;
     private final static String API_URL = OnkibotBackendApplication.API_BASE_URL + "/users";
+    private MockMvc mockMvc;
+    private MockHttpSession mockHttpSession;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -37,22 +42,32 @@ public class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Before
     public void setup() {
         this.mockMvc = (MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build());
+        this.resetSession();
     }
+
+    // TODO: add testGetUserWithAuthentication && testGetUserWithoutAuthentication
 
     @Test
     public void testGetUser() throws Exception {
-        // TODO: create an encrypted password string with PasswordEncoder
+        this.resetSession();
+        String rawPassword = "testPassword123";
+        String encodedPassword = passwordEncoder.encode(rawPassword);
+
         // Create the user first
         User user = new User(
                 "test@onkibot.com",
-                "TODO",
+                encodedPassword,
                 "OnkiBOT Tester",
                 true
         );
         userRepository.save(user);
+        assertEquals(encodedPassword, user.getEncodedPassword());
 
         // Get the user from the URL
         MvcResult userResult = this.mockMvc.perform(get(API_URL + "/1")
@@ -66,9 +81,25 @@ public class UserControllerTest {
         ObjectMapper mapper = new ObjectMapper();
         UserModel responseUserModel = mapper.readValue(jsonString, UserModel.class);
 
+        assertEquals(1, responseUserModel.getUserId());
         assertEquals(user.getEmail(), responseUserModel.getEmail());
         assertEquals(user.getName(), responseUserModel.getName());
         assertEquals(user.getIsInstructor(), responseUserModel.getIsInstructor());
-        assertEquals(1, responseUserModel.getUserId());
+    }
+
+
+    @Test
+    public void testGetNonExistingUser() throws Exception {
+        this.resetSession();
+        this.mockMvc.perform(get(API_URL + "/2")
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isNotFound());
+    }
+
+    private void resetSession() {
+        this.mockHttpSession = new MockHttpSession(
+                webApplicationContext.getServletContext(),
+                UUID.randomUUID().toString()
+        );
     }
 }
