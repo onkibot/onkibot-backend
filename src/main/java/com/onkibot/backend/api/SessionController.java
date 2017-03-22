@@ -37,9 +37,13 @@ public class SessionController {
 
     @RequestMapping(method = RequestMethod.GET)
     public UserModel session(HttpSession session) {
-        int userId = (int) session.getAttribute("userId");
-        User user = userRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        return new UserModel(user);
+        Integer userId = (Integer)session.getAttribute("userId");
+        if (userId != null) {
+            User user = userRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException(userId));
+            return new UserModel(user);
+        } else {
+            return null;
+        }
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
