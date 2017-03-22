@@ -4,7 +4,7 @@ public class CourseInputModel {
     private String name;
     private String description;
 
-    public CourseInputModel() { }
+    protected CourseInputModel() { }
 
     public String getName() {
         return name;

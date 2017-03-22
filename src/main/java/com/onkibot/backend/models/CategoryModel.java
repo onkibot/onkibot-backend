@@ -3,10 +3,12 @@ package com.onkibot.backend.models;
 import com.onkibot.backend.database.entities.Category;
 
 public class CategoryModel {
-    private final int categoryId;
-    private final int courseId;
-    private final String name;
-    private final String description;
+    private int categoryId;
+    private int courseId;
+    private String name;
+    private String description;
+
+    protected CategoryModel() { }
 
     public CategoryModel(Category category) {
         this.categoryId = category.getCategoryId();

@@ -4,7 +4,7 @@ public class ResourceInputModel {
     private String name;
     private String body;
 
-    public ResourceInputModel() { }
+    protected ResourceInputModel() { }
 
     public String getName() {
         return name;
