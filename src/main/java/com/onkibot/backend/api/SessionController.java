@@ -1,5 +1,6 @@
 package com.onkibot.backend.api;
 
+import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.UserRepository;
 import com.onkibot.backend.exceptions.UserNotFoundException;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/api/v1/session")
+@RequestMapping(OnkibotBackendApplication.API_BASE_URL + "/session")
 public class SessionController {
     @Autowired
     private AuthenticationManager authenticationManager;
