@@ -1,5 +1,6 @@
 package com.onkibot.backend.api;
 
+import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.Category;
 import com.onkibot.backend.database.entities.Course;
 import com.onkibot.backend.database.repositories.CategoryRepository;
@@ -17,7 +18,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/courses/{courseId}/categories")
+@RequestMapping(OnkibotBackendApplication.API_BASE_URL + "/courses/{courseId}/categories")
 public class CategoryController {
     @Autowired
     private CategoryRepository categoryRepository;
@@ -25,24 +26,26 @@ public class CategoryController {
     @Autowired
     private CourseRepository courseRepository;
 
+    @RequestMapping(method = RequestMethod.GET, value = "/{categoryId}")
+    CategoryModel get(@PathVariable int courseId, @PathVariable int categoryId) {
+        Category category = this.assertCourseCategory(courseId, categoryId);
+        return new CategoryModel(category);
+    }
+
     @RequestMapping(method = RequestMethod.GET)
-    Collection<CategoryModel> readCategories(@PathVariable int courseId) {
+    Collection<CategoryModel> getAll(@PathVariable int courseId) {
         Course course = this.assertCourse(courseId);
         return course.getCategories().stream().map(CategoryModel::new).collect(Collectors.toList());
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    ResponseEntity<CategoryModel> add(@PathVariable int courseId, @RequestBody CategoryInputModel categoryInput) {
+    ResponseEntity<CategoryModel> post(@PathVariable int courseId, @RequestBody CategoryInputModel categoryInput) {
         Course course = this.assertCourse(courseId);
         Category newCategory = categoryRepository.save(new Category(course, categoryInput.getName(), categoryInput.getDescription()));
         return new ResponseEntity<>(new CategoryModel(newCategory), HttpStatus.CREATED);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{categoryId}")
-    CategoryModel readCategory(@PathVariable int courseId, @PathVariable int categoryId) {
-        Category category = this.assertCourseCategory(courseId, categoryId);
-        return new CategoryModel(category);
-    }
+    // TODO: add DELETE.
 
     private Course assertCourse(int courseId) {
         return this.courseRepository.findByCourseId(courseId).orElseThrow(() -> new CourseNotFoundException(courseId));
