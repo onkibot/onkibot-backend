@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -18,6 +19,7 @@ import static org.junit.Assert.*;
 @SpringApplicationConfiguration(RepositoryConfiguration.class)
 @EnableJpaRepositories
 @WebAppConfiguration
+@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:./beforeTestRun.sql")
 public class UserRepositoryTest {
     private UserRepository userRepository;
 
@@ -28,10 +30,11 @@ public class UserRepositoryTest {
 
     @Test
     public void testCreateUser() {
+        // TODO: create an encrypted password string with PasswordEncoder
         // Setup user
         User user = new User(
                 "test@onkibot.com",
-                "da",
+                "TODO",
                 "OnkiBOT Tester",
                 true
         );
@@ -52,5 +55,20 @@ public class UserRepositoryTest {
         assertEquals(user.getEmail(), fetchedUser.getEmail());
         assertEquals(user.getName(), fetchedUser.getName());
         assertEquals(user.getEncodedPassword(), fetchedUser.getEncodedPassword());
+
+        // Verify the user count in the db
+        long userCount = userRepository.count();
+        assertEquals(userCount, 1);
+
+        // Get all the users from the database
+        Iterable<User> products = userRepository.findAll();
+
+        int count = 0;
+
+        for(User u : products){
+            count++;
+        }
+
+        assertEquals(count, 1);
     }
 }
