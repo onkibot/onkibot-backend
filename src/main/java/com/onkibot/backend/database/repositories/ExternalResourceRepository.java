@@ -7,6 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface ExternalResourceRepository extends CrudRepository<ExternalResource, Integer> {
-    Optional<ExternalResource> findByResource(Resource resource);
     Optional<ExternalResource> findByExternalResourceId(int externalResourceId);
 }
