@@ -45,7 +45,12 @@ public class CategoryController {
         return new ResponseEntity<>(new CategoryModel(newCategory), HttpStatus.CREATED);
     }
 
-    // TODO: add DELETE.
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{categoryId}")
+    public ResponseEntity<Void> delete(@PathVariable int courseId, @PathVariable int categoryId) {
+        Category category = this.assertCourseCategory(courseId, categoryId);
+        categoryRepository.delete(category);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
     private Course assertCourse(int courseId) {
         return this.courseRepository.findByCourseId(courseId).orElseThrow(() -> new CourseNotFoundException(courseId));
