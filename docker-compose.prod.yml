@@ -9,18 +9,24 @@ services:
       - '127.0.0.1:8080:8080'
     depends_on:
       - db
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
   db:
     image: mysql
     ports:
-      - '127.0.0.1:3306:3306'
+      - '3306:3306'
     volumes:
       - db_data:/var/lib/mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: onkibot
-      MYSQL_DATABASE: onkibot
-      MYSQL_USER: onkibot
-      MYSQL_PASSWORD: onkibot
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
 volumes:
   db_data:
 

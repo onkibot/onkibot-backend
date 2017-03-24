@@ -41,6 +41,8 @@ dependencies {
     compile 'mysql:mysql-connector-java'
     compile 'com.fasterxml.jackson.core:jackson-databind'
 
+    compile group: 'com.github.slugify', name: 'slugify', version: '2.1.8'
+
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.springframework.security:spring-security-test'
     testCompile 'org.spockframework:spock-spring'

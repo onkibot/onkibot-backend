@@ -5,11 +5,13 @@ import com.onkibot.backend.database.entities.User;
 import java.util.Date;
 
 public class UserModel {
-    private final int userId;
-    private final String email;
-    private final String name;
-    private final Date createdTime;
-    private final boolean isInstructor;
+    private int userId;
+    private String email;
+    private String name;
+    private Date createdTime;
+    private boolean isInstructor;
+
+    protected UserModel() { }
 
     public UserModel(int userId, String email, String name, Date createdTime, boolean isInstructor) {
         this.userId = userId;
