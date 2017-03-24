@@ -25,6 +25,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -48,7 +49,10 @@ public class SignupControllerTest {
 
     @Before
     public void setup() {
-        this.mockMvc = (MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build());
+        this.mockMvc = MockMvcBuilders
+                .webAppContextSetup(this.webApplicationContext)
+                .apply(springSecurity())
+                .build();
         this.resetSession();
     }
 
@@ -70,6 +74,7 @@ public class SignupControllerTest {
 
 
         MvcResult signupResult = this.mockMvc.perform(post(API_URL)
+                .session(this.mockHttpSession)
                 .content(mapper.writeValueAsString(signupInfoModel))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.ALL))
@@ -110,6 +115,7 @@ public class SignupControllerTest {
                 true
         );
         this.mockMvc.perform(post(API_URL)
+                .session(this.mockHttpSession)
                 .content(mapper.writeValueAsString(signupInfoModel))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.ALL))

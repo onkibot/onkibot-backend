@@ -6,6 +6,11 @@ public class CourseInputModel {
 
     protected CourseInputModel() { }
 
+    public CourseInputModel(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
     public String getName() {
         return name;
     }

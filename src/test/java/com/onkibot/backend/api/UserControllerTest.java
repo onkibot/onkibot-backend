@@ -13,6 +13,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -24,6 +25,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -47,14 +49,17 @@ public class UserControllerTest {
 
     @Before
     public void setup() {
-        this.mockMvc = (MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build());
+        this.mockMvc = MockMvcBuilders
+                .webAppContextSetup(this.webApplicationContext)
+                .apply(springSecurity())
+                .build();
         this.resetSession();
     }
 
     // TODO: add testGetUserWithAuthentication && testGetUserWithoutAuthentication
 
     @Test
-    public void testGetUser() throws Exception {
+    public void testGetUserWithoutAuthentication() throws Exception {
         this.resetSession();
         String rawPassword = "testPassword123";
         String encodedPassword = passwordEncoder.encode(rawPassword);
@@ -70,7 +75,32 @@ public class UserControllerTest {
         assertEquals(encodedPassword, user.getEncodedPassword());
 
         // Get the user from the URL
-        MvcResult userResult = this.mockMvc.perform(get(API_URL + "/1")
+        this.mockMvc.perform(get(API_URL + "/" + user.getUserId())
+                .session(this.mockHttpSession)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER"})
+    public void testGetUserWithAuthentication() throws Exception {
+        this.resetSession();
+        String rawPassword = "testPassword123";
+        String encodedPassword = passwordEncoder.encode(rawPassword);
+
+        // Create the user first
+        User user = new User(
+                "test@onkibot.com",
+                encodedPassword,
+                "OnkiBOT Tester",
+                true
+        );
+        userRepository.save(user);
+        assertEquals(encodedPassword, user.getEncodedPassword());
+
+        // Get the user from the URL
+        MvcResult userResult = this.mockMvc.perform(get(API_URL + "/" + user.getUserId())
+                .session(this.mockHttpSession)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
@@ -87,11 +117,21 @@ public class UserControllerTest {
         assertEquals(user.getIsInstructor(), responseUserModel.getIsInstructor());
     }
 
-
     @Test
-    public void testGetNonExistingUser() throws Exception {
+    public void testGetNonExistingUserWithoutAuthentication() throws Exception {
         this.resetSession();
         this.mockMvc.perform(get(API_URL + "/2")
+                .session(this.mockHttpSession)
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER"})
+    public void testGetNonExistingUserWithAuthentication() throws Exception {
+        this.resetSession();
+        this.mockMvc.perform(get(API_URL + "/2")
+                .session(this.mockHttpSession)
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
     }

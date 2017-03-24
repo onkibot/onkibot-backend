@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CourseModel {
-    private int courseId;
+    private Integer courseId;
     private String name;
     private String description;
     private List<CategoryModel> categories;
@@ -20,7 +20,7 @@ public class CourseModel {
         this.categories = course.getCategories().stream().map(CategoryModel::new).collect(Collectors.toList());
     }
 
-    public int getCourseId() {
+    public Integer getCourseId() {
         return courseId;
     }
 

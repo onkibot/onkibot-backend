@@ -39,8 +39,8 @@ public class CourseController {
         return new ResponseEntity<>(new CourseModel(course), HttpStatus.CREATED);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
-    public ResponseEntity<Void> delete(@RequestParam int courseId) {
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{courseId}")
+    public ResponseEntity<Void> delete(@PathVariable int courseId) {
         Course course = assertCourse(courseId);
         courseRepository.delete(course);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

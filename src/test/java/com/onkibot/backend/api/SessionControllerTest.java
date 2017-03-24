@@ -25,6 +25,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -48,7 +49,10 @@ public class SessionControllerTest {
 
     @Before
     public void setup() {
-        this.mockMvc = (MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build());
+        this.mockMvc = MockMvcBuilders
+                .webAppContextSetup(this.webApplicationContext)
+                .apply(springSecurity())
+                .build();
         this.resetSession();
     }
 
