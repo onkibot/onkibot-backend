@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:./beforeTestRun.sql")
 public class SessionControllerTest {
     private final static String API_URL = OnkibotBackendApplication.API_BASE_URL + "/session";
+
     private MockMvc mockMvc;
     private MockHttpSession mockHttpSession;
 
