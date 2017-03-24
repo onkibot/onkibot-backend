@@ -85,6 +85,34 @@ public class ResourceControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = {"USER"})
+    public void testGetExistingCategoryWithWrongCourse() throws Exception {
+        Course course1 = createRepositoryCourse();
+        Course course2 = createRepositoryCourse();
+        createRepositoryCategory(course1);
+        Category category2 = createRepositoryCategory(course2);
+
+        this.mockMvc.perform(get(API_URL_COURSE + "/" + course1.getCourseId() + "/" + API_PATH_CATEGORY + "/" + category2.getCategoryId())
+                .accept(MediaType.ALL))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER"})
+    public void testGetExistingResourceWithWrongCategory() throws Exception {
+        User publisherUser = createRepositoryUser();
+        Course course = createRepositoryCourse();
+        Category category1 = createRepositoryCategory(course);
+        Category category2 = createRepositoryCategory(course);
+        createRepositoryResource(category1, publisherUser);
+        Resource resource2 = createRepositoryResource(category2, publisherUser);
+
+        this.mockMvc.perform(get(API_URL_COURSE + "/" + course.getCourseId() + "/" + API_PATH_CATEGORY + "/" + category1.getCategoryId() + "/" + API_PATH_RESOURCE + "/" + resource2.getResourceId())
+                .accept(MediaType.ALL))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     public void testGetNonExistingResourceWithoutAuthentication() throws Exception {
         Course course = createRepositoryCourse();
         Category category = createRepositoryCategory(course);

@@ -66,6 +66,19 @@ public class CategoryControllerTest {
     }
 
     @Test
+    @WithMockUser(authorities = {"USER"})
+    public void testGetExistingCategoryWithWrongCourse() throws Exception {
+        Course course1 = createRepositoryCourse();
+        Course course2 = createRepositoryCourse();
+        createRepositoryCategory(course1);
+        Category category2 = createRepositoryCategory(course2);
+
+        this.mockMvc.perform(get(API_URL_COURSE + "/" + course1.getCourseId() + "/" + API_PATH + "/" + category2.getCategoryId())
+                .accept(MediaType.ALL))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     public void testGetNonExistingCategoryWithoutAuthentication() throws Exception {
         Course course = createRepositoryCourse();
         this.mockMvc.perform(get(API_URL_COURSE + "/" + course.getCourseId() + "/" + API_PATH + "/2")

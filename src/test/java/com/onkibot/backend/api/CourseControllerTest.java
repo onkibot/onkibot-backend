@@ -60,6 +60,21 @@ public class CourseControllerTest {
     }
 
     @Test
+    public void testGetNonExistingResourceWithoutAuthentication() throws Exception {
+        this.mockMvc.perform(get(API_URL + "/2")
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER"})
+    public void testGetNonExistingResourceWithAuthentication() throws Exception {
+        this.mockMvc.perform(get(API_URL + "/2")
+                .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     public void testGetCourseWithoutAuthentication() throws Exception {
         Course course = createRepositoryCourse();
 
