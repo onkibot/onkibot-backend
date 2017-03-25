@@ -13,7 +13,7 @@ pipeline:
       - ./gradlew jacocoTestReport
       - curl -s https://codecov.io/bash | bash -s - -t $CODECOV_TOKEN
     when:
-      event: [push, pull_request]
+      event: push
 
   development:
     image: docker/compose:1.8.1
