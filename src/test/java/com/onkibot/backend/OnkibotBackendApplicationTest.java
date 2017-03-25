@@ -12,10 +12,13 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @SpringApplicationConfiguration(OnkibotBackendApplication.class)
 @WebAppConfiguration
 @EnableJpaRepositories
-@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:./beforeTestRun.sql")
+@Sql(
+  executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+  scripts = "classpath:./beforeTestRun.sql"
+)
 public class OnkibotBackendApplicationTest {
-    @Test
-    public void testMain() {
-        OnkibotBackendApplication.main(new String[]{});
-    }
+  @Test
+  public void testMain() {
+    OnkibotBackendApplication.main(new String[] {});
+  }
 }

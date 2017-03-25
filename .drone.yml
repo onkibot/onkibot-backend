@@ -3,6 +3,7 @@ pipeline:
     image: java:8
     commands:
       - java -version
+      - ./gradlew verifyGoogleJavaFormat
       - export DB_HOST=$(/sbin/ip route | awk '/default/ { print $3 }')
       - export DB_PORT=3307
       - export DB_ROOT_PASSWORD=onkibot_test

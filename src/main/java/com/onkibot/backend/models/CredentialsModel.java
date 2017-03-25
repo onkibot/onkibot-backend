@@ -1,21 +1,21 @@
 package com.onkibot.backend.models;
 
 public class CredentialsModel {
-    private String email;
-    private String password;
+  private String email;
+  private String password;
 
-    protected CredentialsModel() { }
+  protected CredentialsModel() {}
 
-    public CredentialsModel(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
+  public CredentialsModel(String email, String password) {
+    this.email = email;
+    this.password = password;
+  }
 
-    public String getEmail() {
-        return email;
-    }
+  public String getEmail() {
+    return email;
+  }
 
-    public String getPassword() {
-        return password;
-    }
+  public String getPassword() {
+    return password;
+  }
 }
