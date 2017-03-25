@@ -121,11 +121,7 @@ public class CategoryControllerTest {
         ObjectMapper mapper = new ObjectMapper();
         CategoryModel responseCategoryModel = mapper.readValue(jsonString, CategoryModel.class);
 
-        assertEquals((int) category.getCategoryId(), responseCategoryModel.getCategoryId());
-        assertEquals((int) category.getCourse().getCourseId(), responseCategoryModel.getCourseId());
-        assertEquals(category.getName(), responseCategoryModel.getName());
-        assertEquals(category.getDescription(), responseCategoryModel.getDescription());
-        assertEquals(category.getResources().size(), responseCategoryModel.getResources().size());
+        assertResponseModel(category, responseCategoryModel);
     }
 
     @Test
@@ -159,22 +155,8 @@ public class CategoryControllerTest {
 
         assertEquals(responseCategories.size(), 2);
 
-        CategoryModel responseCategoryModel1 = responseCategories.get(0);
-        CategoryModel responseCategoryModel2 = responseCategories.get(1);
-
-
-        assertEquals((int) category1.getCategoryId(), responseCategoryModel1.getCategoryId());
-        assertEquals((int) category1.getCourse().getCourseId(), responseCategoryModel1.getCourseId());
-        assertEquals(category1.getName(), responseCategoryModel1.getName());
-        assertEquals(category1.getDescription(), responseCategoryModel1.getDescription());
-        assertEquals(category1.getResources().size(), responseCategoryModel1.getResources().size());
-
-
-        assertEquals((int) category2.getCategoryId(), responseCategoryModel2.getCategoryId());
-        assertEquals((int) category2.getCourse().getCourseId(), responseCategoryModel2.getCourseId());
-        assertEquals(category2.getName(), responseCategoryModel2.getName());
-        assertEquals(category2.getDescription(), responseCategoryModel2.getDescription());
-        assertEquals(category2.getResources().size(), responseCategoryModel2.getResources().size());
+        assertResponseModel(category1, responseCategories.get(0));
+        assertResponseModel(category2, responseCategories.get(1));
     }
 
     @Test
@@ -268,5 +250,13 @@ public class CategoryControllerTest {
         );
         courseRepository.save(course);
         return course;
+    }
+
+    private void assertResponseModel(Category category, CategoryModel responseModel) {
+        assertEquals((int) category.getCategoryId(), responseModel.getCategoryId());
+        assertEquals((int) category.getCourse().getCourseId(), responseModel.getCourseId());
+        assertEquals(category.getName(), responseModel.getName());
+        assertEquals(category.getDescription(), responseModel.getDescription());
+        assertEquals(category.getResources().size(), responseModel.getResources().size());
     }
 }

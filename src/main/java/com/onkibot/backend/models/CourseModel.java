@@ -10,6 +10,7 @@ public class CourseModel {
     private String name;
     private String description;
     private List<CategoryModel> categories;
+    private List<UserModel> attendees;
 
     protected CourseModel() { }
 
@@ -18,6 +19,7 @@ public class CourseModel {
         this.name = course.getName();
         this.description = course.getDescription();
         this.categories = course.getCategories().stream().map(CategoryModel::new).collect(Collectors.toList());
+        this.attendees = course.getAttendees().stream().map(UserModel::new).collect(Collectors.toList());
     }
 
     public int getCourseId() {
@@ -34,5 +36,9 @@ public class CourseModel {
 
     public List<CategoryModel> getCategories() {
         return categories;
+    }
+
+    public List<UserModel> getAttendees() {
+        return attendees;
     }
 }

@@ -58,15 +58,7 @@ public class Resource {
         return publisherUser;
     }
 
-    public void setPublisherUser(User publisherUser) {
-        this.publisherUser = publisherUser;
-    }
-
     public List<ExternalResource> getExternalResources() {
         return externalResources;
-    }
-
-    public void setExternalResource(List<ExternalResource> externalResources) {
-        this.externalResources = externalResources;
     }
 }

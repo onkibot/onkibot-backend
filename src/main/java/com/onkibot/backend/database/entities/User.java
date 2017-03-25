@@ -27,7 +27,11 @@ public class User implements Serializable {
     private boolean isInstructor;
 
     @ManyToMany
-    @JoinTable(name = "attends")
+    @JoinTable(
+            name = "attends",
+            joinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId"),
+            inverseJoinColumns = @JoinColumn(name = "courseId", referencedColumnName = "courseId")
+    )
     private List<Course> attending;
 
     @OneToMany(mappedBy = "publisherUser")
