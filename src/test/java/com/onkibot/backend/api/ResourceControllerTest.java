@@ -31,6 +31,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -159,14 +160,8 @@ public class ResourceControllerTest {
         String jsonString = result.getResponse().getContentAsString();
 
         ObjectMapper mapper = new ObjectMapper();
-        ResourceModel responseResourceModel = mapper.readValue(jsonString, ResourceModel.class);
 
-        assertEquals((int) resource.getResourceId(), responseResourceModel.getResourceId());
-        assertEquals((int) resource.getCategory().getCategoryId(), responseResourceModel.getCategoryId());
-        assertEquals((int) publisherUser.getUserId(), responseResourceModel.getPublisherUser().getUserId());
-        assertEquals(resource.getName(), responseResourceModel.getName());
-        assertEquals(resource.getBody(), responseResourceModel.getBody());
-        assertEquals(0, resource.getExternalResources().size());
+        assertResponseModel(resource, mapper.readValue(jsonString, ResourceModel.class));
     }
 
     @Test
@@ -205,22 +200,8 @@ public class ResourceControllerTest {
 
         assertEquals(responseResources.size(), 2);
 
-        ResourceModel responseResourceModel1 = responseResources.get(0);
-        ResourceModel responseResourceModel2 = responseResources.get(1);
-
-        assertEquals((int) resource1.getResourceId(), responseResourceModel1.getResourceId());
-        assertEquals((int) resource1.getCategory().getCategoryId(), responseResourceModel1.getCategoryId());
-        assertEquals((int) publisherUser.getUserId(), responseResourceModel1.getPublisherUser().getUserId());
-        assertEquals(resource1.getName(), responseResourceModel1.getName());
-        assertEquals(resource1.getBody(), responseResourceModel1.getBody());
-        assertEquals(0, resource1.getExternalResources().size());
-
-        assertEquals((int) resource2.getResourceId(), responseResourceModel2.getResourceId());
-        assertEquals((int) resource2.getCategory().getCategoryId(), responseResourceModel2.getCategoryId());
-        assertEquals((int) publisherUser.getUserId(), responseResourceModel2.getPublisherUser().getUserId());
-        assertEquals(resource2.getName(), responseResourceModel2.getName());
-        assertEquals(resource2.getBody(), responseResourceModel2.getBody());
-        assertEquals(0, resource2.getExternalResources().size());
+        assertResponseModel(resource1, responseResources.get(0));
+        assertResponseModel(resource2, responseResources.get(1));
     }
 
     @Test
@@ -274,15 +255,13 @@ public class ResourceControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andReturn();
 
-        String jsonString = categoryCreationResult.getResponse().getContentAsString();
-
-        ResourceModel responseResourceModel = mapper.readValue(jsonString, ResourceModel.class);
-
-        assertEquals(1, responseResourceModel.getResourceId());
-        assertEquals((int) category.getCategoryId(), responseResourceModel.getCategoryId());
-        assertEquals((int) publisherUser.getUserId(), responseResourceModel.getPublisherUser().getUserId());
-        assertEquals(resourceInputModel.getName(), responseResourceModel.getName());
-        assertEquals(resourceInputModel.getBody(), responseResourceModel.getBody());
+        assertInputModel(
+                mapper,
+                category,
+                publisherUser,
+                resourceInputModel,
+                categoryCreationResult.getResponse().getContentAsString()
+        );
     }
 
     private Resource createRepositoryResource(Category category, User publisherUser) {
@@ -329,5 +308,26 @@ public class ResourceControllerTest {
         );
         userRepository.save(user);
         return user;
+    }
+
+    private void assertResponseModel(Resource resource, ResourceModel responseModel)
+            throws IOException {
+        assertEquals((int) resource.getResourceId(), responseModel.getResourceId());
+        assertEquals((int) resource.getCategory().getCategoryId(), responseModel.getCategoryId());
+        assertEquals((int) resource.getPublisherUser().getUserId(), responseModel.getPublisherUser().getUserId());
+        assertEquals(resource.getName(), responseModel.getName());
+        assertEquals(resource.getBody(), responseModel.getBody());
+        assertEquals(0, resource.getExternalResources().size());
+    }
+
+    private void assertInputModel(ObjectMapper mapper, Category category, User publisherUser,
+                            ResourceInputModel resourceInputModel, String jsonString) throws IOException {
+        ResourceModel responseResourceModel = mapper.readValue(jsonString, ResourceModel.class);
+
+        assertEquals(1, responseResourceModel.getResourceId());
+        assertEquals((int) category.getCategoryId(), responseResourceModel.getCategoryId());
+        assertEquals((int) publisherUser.getUserId(), responseResourceModel.getPublisherUser().getUserId());
+        assertEquals(resourceInputModel.getName(), responseResourceModel.getName());
+        assertEquals(resourceInputModel.getBody(), responseResourceModel.getBody());
     }
 }

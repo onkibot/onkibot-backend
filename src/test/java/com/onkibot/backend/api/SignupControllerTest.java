@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -86,6 +87,7 @@ public class SignupControllerTest {
         String jsonString = signupResult.getResponse().getContentAsString();
 
         UserModel responseUserModel = mapper.readValue(jsonString, UserModel.class);
+
         assertEquals(1, responseUserModel.getUserId());
         assertEquals(signupInfoModel.getEmail(), responseUserModel.getEmail());
         assertEquals(signupInfoModel.getName(), responseUserModel.getName());

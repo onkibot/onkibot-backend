@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.UserRepository;
+import com.onkibot.backend.models.UserDetailModel;
 import com.onkibot.backend.models.UserModel;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +22,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -91,21 +94,17 @@ public class UserControllerTest {
         assertEquals(encodedPassword, user.getEncodedPassword());
 
         // Get the user from the URL
-        MvcResult userResult = this.mockMvc.perform(get(API_URL + "/" + user.getUserId())
+        MvcResult result = this.mockMvc.perform(get(API_URL + "/" + user.getUserId())
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andReturn();
 
-        String jsonString = userResult.getResponse().getContentAsString();
+        String jsonString = result.getResponse().getContentAsString();
 
         ObjectMapper mapper = new ObjectMapper();
-        UserModel responseUserModel = mapper.readValue(jsonString, UserModel.class);
 
-        assertEquals(1, responseUserModel.getUserId());
-        assertEquals(user.getEmail(), responseUserModel.getEmail());
-        assertEquals(user.getName(), responseUserModel.getName());
-        assertEquals(user.getIsInstructor(), responseUserModel.getIsInstructor());
+        assertResponseModel(user, mapper.readValue(jsonString, UserDetailModel.class));
     }
 
     @Test
@@ -121,5 +120,14 @@ public class UserControllerTest {
         this.mockMvc.perform(get(API_URL + "/2")
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
+    }
+
+    private void assertResponseModel(User user, UserDetailModel responseModel) throws IOException {
+        assertEquals(1, responseModel.getUserId());
+        assertEquals(user.getEmail(), responseModel.getEmail());
+        assertEquals(user.getName(), responseModel.getName());
+        assertEquals(user.getIsInstructor(), responseModel.getIsInstructor());
+        assertEquals(user.getAttending().size(), responseModel.getAttending().size());
+        assertEquals(user.getResources().size(), responseModel.getResources().size());
     }
 }
