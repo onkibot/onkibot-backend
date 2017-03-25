@@ -62,7 +62,7 @@ public class Resource {
         this.publisherUser = publisherUser;
     }
 
-    public List<ExternalResource> getExternalResource() {
+    public List<ExternalResource> getExternalResources() {
         return externalResources;
     }
 

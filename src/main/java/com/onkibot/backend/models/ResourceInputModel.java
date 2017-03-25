@@ -6,6 +6,11 @@ public class ResourceInputModel {
 
     protected ResourceInputModel() { }
 
+    public ResourceInputModel(String name, String body) {
+        this.name = name;
+        this.body = body;
+    }
+
     public String getName() {
         return name;
     }

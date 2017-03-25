@@ -6,6 +6,11 @@ public class CategoryInputModel {
 
     protected CategoryInputModel() { }
 
+    public CategoryInputModel(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
     public String getName() {
         return name;
     }
