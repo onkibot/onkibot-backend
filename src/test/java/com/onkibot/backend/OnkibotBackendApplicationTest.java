@@ -15,7 +15,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:./beforeTestRun.sql")
 public class OnkibotBackendApplicationTest {
     @Test
-    public void contextLoads() {
+    public void testMain() {
+        OnkibotBackendApplication.main(new String[]{});
     }
-
 }

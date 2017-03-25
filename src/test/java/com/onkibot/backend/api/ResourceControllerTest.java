@@ -87,13 +87,10 @@ public class ResourceControllerTest {
 
     @Test
     @WithMockUser(authorities = {"USER"})
-    public void testGetExistingCategoryWithWrongCourse() throws Exception {
-        Course course1 = createRepositoryCourse();
-        Course course2 = createRepositoryCourse();
-        createRepositoryCategory(course1);
-        Category category2 = createRepositoryCategory(course2);
+    public void testGetNonExistingResourceWithNonExistingCategory() throws Exception {
+        Course course = createRepositoryCourse();
 
-        this.mockMvc.perform(get(API_URL_COURSE + "/" + course1.getCourseId() + "/" + API_PATH_CATEGORY + "/" + category2.getCategoryId())
+        this.mockMvc.perform(get(API_URL_COURSE + "/" + course.getCourseId() + "/" + API_PATH_CATEGORY + "/2/" + API_PATH_RESOURCE)
                 .accept(MediaType.ALL))
                 .andExpect(status().isNotFound());
     }
@@ -111,6 +108,23 @@ public class ResourceControllerTest {
         this.mockMvc.perform(get(API_URL_COURSE + "/" + course.getCourseId() + "/" + API_PATH_CATEGORY + "/" + category1.getCategoryId() + "/" + API_PATH_RESOURCE + "/" + resource2.getResourceId())
                 .accept(MediaType.ALL))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER"})
+    public void testGetExistingResourceListWithWrongCategory() throws Exception {
+        User publisherUser = createRepositoryUser();
+        Course course1 = createRepositoryCourse();
+        Course course2 = createRepositoryCourse();
+        Category category1 = createRepositoryCategory(course1);
+        Category category2 = createRepositoryCategory(course2);
+        createRepositoryResource(category1, publisherUser);
+        createRepositoryResource(category2, publisherUser);
+
+        this.mockMvc.perform(get(API_URL_COURSE + "/" + course1.getCourseId() + "/" + API_PATH_CATEGORY + "/" + category2.getCategoryId() + "/" + API_PATH_RESOURCE)
+                .accept(MediaType.ALL))
+                .andExpect(status().isNotFound());
+
     }
 
     @Test
