@@ -1,8 +1,6 @@
 package com.onkibot.backend.models;
 
-import com.onkibot.backend.database.entities.ExternalResource;
 import com.onkibot.backend.database.entities.Resource;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +21,11 @@ public class ResourceModel {
     this.body = resource.getBody();
     this.publisherUser = new UserModel(resource.getPublisherUser());
     this.externalResources =
-            resource.getExternalResources().stream().map(ExternalResourceModel::new).collect(Collectors.toList());
+        resource
+            .getExternalResources()
+            .stream()
+            .map(ExternalResourceModel::new)
+            .collect(Collectors.toList());
   }
 
   public int getResourceId() {
