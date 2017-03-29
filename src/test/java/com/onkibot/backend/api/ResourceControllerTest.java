@@ -40,7 +40,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-// TODO: Add tests for external resources
 // TODO: Add tests for DELETE
 
 @RunWith(SpringJUnit4ClassRunner.class)
