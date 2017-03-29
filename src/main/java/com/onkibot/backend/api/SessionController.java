@@ -3,7 +3,6 @@ package com.onkibot.backend.api;
 import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.UserRepository;
-import com.onkibot.backend.exceptions.UserNotFoundException;
 import com.onkibot.backend.models.CredentialsModel;
 import com.onkibot.backend.models.UserModel;
 import javax.servlet.http.HttpSession;
@@ -34,7 +33,8 @@ public class SessionController {
   @RequestMapping(method = RequestMethod.GET)
   public UserModel session(HttpSession session) {
     return OnkibotBackendApplication.getSessionUser(userRepository, session)
-        .map(UserModel::new).orElse(null);
+        .map(UserModel::new)
+        .orElse(null);
   }
 
   @RequestMapping(method = RequestMethod.DELETE)

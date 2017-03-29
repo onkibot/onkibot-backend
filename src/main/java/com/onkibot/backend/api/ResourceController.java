@@ -12,7 +12,6 @@ import com.onkibot.backend.database.repositories.UserRepository;
 import com.onkibot.backend.exceptions.CategoryNotFoundException;
 import com.onkibot.backend.exceptions.CourseNotFoundException;
 import com.onkibot.backend.exceptions.ResourceNotFoundException;
-import com.onkibot.backend.exceptions.UserNotFoundException;
 import com.onkibot.backend.models.*;
 import java.util.Collection;
 import java.util.stream.Collectors;

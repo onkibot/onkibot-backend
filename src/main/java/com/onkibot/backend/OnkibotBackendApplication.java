@@ -24,7 +24,9 @@ public class OnkibotBackendApplication {
   public static User assertSessionUser(UserRepository userRepository, HttpSession session) {
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId != null) {
-      return userRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException(userId));
+      return userRepository
+          .findByUserId(userId)
+          .orElseThrow(() -> new UserNotFoundException(userId));
     } else {
       throw new UserNotFoundException();
     }

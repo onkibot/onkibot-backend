@@ -68,21 +68,19 @@ public class CourseControllerTest {
   @Test
   public void testGetNonExistingResourceWithoutAuthentication() throws Exception {
     this.mockMvc
-        .perform(get(API_URL + "/2")
-        .accept(MediaType.APPLICATION_JSON_UTF8))
+        .perform(get(API_URL + "/2").accept(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(status().isForbidden());
   }
 
   @Test
   @WithMockUser(
-      username = "test@onkibot.com",
-      authorities = {"USER"}
+    username = "test@onkibot.com",
+    authorities = {"USER"}
   )
   public void testGetNonExistingResourceWithAuthentication() throws Exception {
     getAuthenticatedSession();
     this.mockMvc
-        .perform(get(API_URL + "/2")
-        .accept(MediaType.APPLICATION_JSON_UTF8))
+        .perform(get(API_URL + "/2").accept(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(status().isNotFound());
   }
 
@@ -91,15 +89,14 @@ public class CourseControllerTest {
     Course course = createRepositoryCourse();
 
     this.mockMvc
-        .perform(get(API_URL + "/" + course.getCourseId())
-        .accept(MediaType.ALL))
+        .perform(get(API_URL + "/" + course.getCourseId()).accept(MediaType.ALL))
         .andExpect(status().isForbidden());
   }
 
   @Test
   @WithMockUser(
-      username = "test@onkibot.com",
-      authorities = {"USER"}
+    username = "test@onkibot.com",
+    authorities = {"USER"}
   )
   public void testGetCourseWithAuthentication() throws Exception {
     getAuthenticatedSession();
@@ -107,8 +104,7 @@ public class CourseControllerTest {
 
     MvcResult result =
         this.mockMvc
-            .perform(get(API_URL + "/" + course.getCourseId())
-            .accept(MediaType.ALL))
+            .perform(get(API_URL + "/" + course.getCourseId()).accept(MediaType.ALL))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -122,14 +118,13 @@ public class CourseControllerTest {
 
   @Test
   public void testGetCoursesWithoutAuthentication() throws Exception {
-    this.mockMvc
-        .perform(get(API_URL).accept(MediaType.ALL)).andExpect(status().isForbidden());
+    this.mockMvc.perform(get(API_URL).accept(MediaType.ALL)).andExpect(status().isForbidden());
   }
 
   @Test
   @WithMockUser(
-      username = "test@onkibot.com",
-      authorities = {"USER"}
+    username = "test@onkibot.com",
+    authorities = {"USER"}
   )
   public void testGetCoursesWithAuthentication() throws Exception {
     getAuthenticatedSession();
@@ -138,7 +133,8 @@ public class CourseControllerTest {
 
     MvcResult result =
         this.mockMvc
-            .perform(get(API_URL).accept(MediaType.ALL)).andExpect(status().isOk())
+            .perform(get(API_URL).accept(MediaType.ALL))
+            .andExpect(status().isOk())
             .andReturn();
 
     String jsonString = result.getResponse().getContentAsString();
@@ -170,8 +166,8 @@ public class CourseControllerTest {
 
   @Test
   @WithMockUser(
-      username = "test@onkibot.com",
-      authorities = {"USER"}
+    username = "test@onkibot.com",
+    authorities = {"USER"}
   )
   public void testCreateCourseWithAuthentication() throws Exception {
     MockHttpSession mockHttpSession = getAuthenticatedSession();
@@ -211,8 +207,8 @@ public class CourseControllerTest {
 
   @Test
   @WithMockUser(
-      username = "test@onkibot.com",
-      authorities = {"USER"}
+    username = "test@onkibot.com",
+    authorities = {"USER"}
   )
   public void testDeleteCourseWithAuthentication() throws Exception {
     getAuthenticatedSession();

@@ -36,8 +36,8 @@ public class CourseController {
   }
 
   @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<CourseModel> post(@RequestBody CourseInputModel courseInput,
-      HttpSession session) {
+  public ResponseEntity<CourseModel> post(
+      @RequestBody CourseInputModel courseInput, HttpSession session) {
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     Course course =
         courseRepository.save(new Course(courseInput.getName(), courseInput.getDescription()));
