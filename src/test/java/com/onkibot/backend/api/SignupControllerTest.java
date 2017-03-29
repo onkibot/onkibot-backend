@@ -1,6 +1,7 @@
 package com.onkibot.backend.api;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -88,6 +89,8 @@ public class SignupControllerTest {
     assertEquals(signupInfoModel.getEmail(), responseUserModel.getEmail());
     assertEquals(signupInfoModel.getName(), responseUserModel.getName());
     assertEquals(signupInfoModel.getIsInstructor(), responseUserModel.getIsInstructor());
+    assertTrue(responseUserModel.getAttending().isEmpty());
+    assertTrue(responseUserModel.getResources().isEmpty());
   }
 
   @Test
