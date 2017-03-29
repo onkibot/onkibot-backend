@@ -1,15 +1,15 @@
 package com.onkibot.backend.models;
 
 public class ExternalResourceInputModel {
-    private String url;
+  private String url;
 
-    protected ExternalResourceInputModel() {}
+  protected ExternalResourceInputModel() {}
 
-    public ExternalResourceInputModel(String url) {
-        this.url = url;
-    }
+  public ExternalResourceInputModel(String url) {
+    this.url = url;
+  }
 
-    public String getUrl() {
-        return url;
-    }
+  public String getUrl() {
+    return url;
+  }
 }
