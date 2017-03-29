@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS onkibot_test;
+USE onkibot_test;
+
 CREATE TABLE IF NOT EXISTS user(
         user_id                 INT             PRIMARY KEY     AUTO_INCREMENT,
         email                   VARCHAR(100)    NOT NULL UNIQUE,

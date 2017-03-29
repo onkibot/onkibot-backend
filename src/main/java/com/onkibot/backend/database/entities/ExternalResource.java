@@ -1,54 +1,49 @@
 package com.onkibot.backend.database.entities;
 
-
-import javax.persistence.*;
 import java.io.Serializable;
+import javax.persistence.*;
 
-@Table(
-        uniqueConstraints=
-        @UniqueConstraint(columnNames={"resource_id", "url"})
-)
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"resource_id", "url"}))
 @Entity
 public class ExternalResource implements Serializable {
-    @Id @GeneratedValue
-    private Integer externalResourceId;
+  @Id @GeneratedValue private Integer externalResourceId;
 
-    @ManyToOne
-    @JoinColumn(name = "resource_id")
-    private Resource resource;
+  @ManyToOne
+  @JoinColumn(name = "resource_id")
+  private Resource resource;
 
-    @Column(nullable = false)
-    private String url;
+  @Column(nullable = false)
+  private String url;
 
-    @ManyToOne
-    @JoinColumn(name = "publisher_user_id")
-    private User publisherUser;
+  @ManyToOne
+  @JoinColumn(name = "publisher_user_id")
+  private User publisherUser;
 
-    protected ExternalResource() {}
+  protected ExternalResource() {}
 
-    public ExternalResource(Resource resource, String url, User publisherUser) {
-        this.resource = resource;
-        this.url = url;
-        this.publisherUser = publisherUser;
-    }
+  public ExternalResource(Resource resource, String url, User publisherUser) {
+    this.resource = resource;
+    this.url = url;
+    this.publisherUser = publisherUser;
+  }
 
-    public Integer getExternalResourceId() {
-        return externalResourceId;
-    }
+  public Integer getExternalResourceId() {
+    return externalResourceId;
+  }
 
-    public Resource getResource() {
-        return resource;
-    }
+  public Resource getResource() {
+    return resource;
+  }
 
-    public String getUrl() {
-        return url;
-    }
+  public String getUrl() {
+    return url;
+  }
 
-    public User getPublisherUser() {
-        return publisherUser;
-    }
+  public User getPublisherUser() {
+    return publisherUser;
+  }
 
-    public void setPublisherUser(User publisherUser) {
-        this.publisherUser = publisherUser;
-    }
+  public void setPublisherUser(User publisherUser) {
+    this.publisherUser = publisherUser;
+  }
 }

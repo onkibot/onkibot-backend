@@ -1,4 +1,4 @@
-[OnkiBOT Backend][Website]
+[OnkiBOT Backend][Website] [![Build Status](https://ci.onkibot.com/api/badges/onkibot/onkibot-backend/status.svg)](https://ci.onkibot.com/onkibot/onkibot-backend) [![codecov](https://codecov.io/gh/onkibot/onkibot-backend/branch/master/graph/badge.svg)](https://codecov.io/gh/onkibot/onkibot-backend)
 ===================================
 Description to be added...
 
@@ -7,7 +7,6 @@ Copyright (c) 2017, OnkiBOT Team <<http://www.onkibot.com/>>
 Source
 ------
 The latest and greatest source can be found on [GitHub].  
-Current build status: [![Build Status](https://ci.onkibot.com/api/badges/onkibot/onkibot-backend/status.svg)](https://ci.onkibot.com/onkibot/onkibot-backend)
 
 License
 -------
