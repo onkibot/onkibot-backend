@@ -5,7 +5,7 @@ import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.UserRepository;
 import com.onkibot.backend.exceptions.EmailInUseException;
 import com.onkibot.backend.models.SignupInfoModel;
-import com.onkibot.backend.models.UserModel;
+import com.onkibot.backend.models.UserDetailModel;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class SignupController {
   @Autowired private AuthenticationManager authenticationManager;
 
   @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<UserModel> signup(
+  public ResponseEntity<UserDetailModel> signup(
       @RequestBody SignupInfoModel signupInfo, HttpSession session) {
     String encodedPassword = passwordEncoder.encode(signupInfo.getPassword());
     if (!userRepository.findByEmail(signupInfo.getEmail()).isPresent()) {
@@ -41,7 +41,7 @@ public class SignupController {
           new UsernamePasswordAuthenticationToken(signupInfo.getEmail(), signupInfo.getPassword());
       SecurityContextHolder.getContext()
           .setAuthentication(authenticationManager.authenticate(authentication));
-      UserModel userModel = new UserModel(user);
+      UserDetailModel userModel = new UserDetailModel(user);
       session.setAttribute("user", userModel);
       return new ResponseEntity<>(userModel, HttpStatus.CREATED);
     } else {

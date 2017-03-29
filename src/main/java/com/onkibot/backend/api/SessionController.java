@@ -5,7 +5,7 @@ import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.UserRepository;
 import com.onkibot.backend.exceptions.UserNotFoundException;
 import com.onkibot.backend.models.CredentialsModel;
-import com.onkibot.backend.models.UserModel;
+import com.onkibot.backend.models.UserDetailModel;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,23 +21,23 @@ public class SessionController {
   @Autowired private UserRepository userRepository;
 
   @RequestMapping(method = RequestMethod.POST)
-  public UserModel login(@RequestBody CredentialsModel credentials, HttpSession session) {
+  public UserDetailModel login(@RequestBody CredentialsModel credentials, HttpSession session) {
     Authentication authentication =
         new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword());
     SecurityContextHolder.getContext()
         .setAuthentication(authenticationManager.authenticate(authentication));
-    UserModel userModel = new UserModel(userRepository.findByEmail(credentials.getEmail()).get());
+    UserDetailModel userModel = new UserDetailModel(userRepository.findByEmail(credentials.getEmail()).get());
     session.setAttribute("userId", userModel.getUserId());
     return userModel;
   }
 
   @RequestMapping(method = RequestMethod.GET)
-  public UserModel session(HttpSession session) {
+  public UserDetailModel session(HttpSession session) {
     Integer userId = (Integer) session.getAttribute("userId");
     if (userId != null) {
       User user =
           userRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException(userId));
-      return new UserModel(user);
+      return new UserDetailModel(user);
     } else {
       return null;
     }
