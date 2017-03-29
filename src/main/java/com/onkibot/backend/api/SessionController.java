@@ -26,21 +26,15 @@ public class SessionController {
         new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword());
     SecurityContextHolder.getContext()
         .setAuthentication(authenticationManager.authenticate(authentication));
-    UserModel userModel = new UserModel(userRepository.findByEmail(credentials.getEmail()).get());
-    session.setAttribute("userId", userModel.getUserId());
-    return userModel;
+    User user = userRepository.findByEmail(credentials.getEmail()).get();
+    OnkibotBackendApplication.setSessionUser(user, session);
+    return new UserModel(user);
   }
 
   @RequestMapping(method = RequestMethod.GET)
   public UserModel session(HttpSession session) {
-    Integer userId = (Integer) session.getAttribute("userId");
-    if (userId != null) {
-      User user =
-          userRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException(userId));
-      return new UserModel(user);
-    } else {
-      return null;
-    }
+    return OnkibotBackendApplication.getSessionUser(userRepository, session)
+        .map(UserModel::new).orElse(null);
   }
 
   @RequestMapping(method = RequestMethod.DELETE)

@@ -54,10 +54,7 @@ public class ResourceController {
       @PathVariable int categoryId,
       @RequestBody ResourceInputModel resourceInput,
       HttpSession session) {
-
-    int userId = (int) session.getAttribute("userId");
-    User user =
-        userRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException(userId));
+    User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     Category category = this.assertCourseCategory(courseId, categoryId);
     Resource newResource =
         resourceRepository.save(
