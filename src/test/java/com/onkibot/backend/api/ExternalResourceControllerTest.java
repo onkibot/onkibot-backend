@@ -76,6 +76,38 @@ public class ExternalResourceControllerTest {
 
   @Test
   @WithMockUser(authorities = {"USER"})
+  public void testGetExistingExternalResourceWithWrongCategory() throws Exception {
+    User publisherUser = createRepositoryUser();
+    Course course1 = createRepositoryCourse();
+    Course course2 = createRepositoryCourse();
+    Category category1 = createRepositoryCategory(course1);
+    Category category2 = createRepositoryCategory(course2);
+    Resource resource1 = createRepositoryResource(category1, publisherUser);
+    Resource resource2 = createRepositoryResource(category2, publisherUser);
+    createRepositoryExternalResource(resource1, publisherUser);
+    createRepositoryExternalResource(resource2, publisherUser);
+
+    this.mockMvc
+        .perform(
+            get(API_URL_COURSE
+                    + "/"
+                    + course1.getCourseId()
+                    + "/"
+                    + API_PATH_CATEGORY
+                    + "/"
+                    + category2.getCategoryId()
+                    + "/"
+                    + API_PATH_RESOURCE
+                    + "/"
+                    + resource1.getResourceId()
+                    + "/"
+                    + API_PATH_EXTERNAL_RESOURCE)
+                .accept(MediaType.ALL))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @WithMockUser(authorities = {"USER"})
   public void testGetNonExistingExternalResourceWithNonExistingResource() throws Exception {
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
