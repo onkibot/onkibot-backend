@@ -17,7 +17,7 @@ public class Course {
   @OneToMany(mappedBy = "course")
   private List<Category> categories;
 
-  @ManyToMany(mappedBy = "attending")
+  @ManyToMany(mappedBy = "attending", cascade = CascadeType.PERSIST)
   private List<User> attendees;
 
   protected Course() {}

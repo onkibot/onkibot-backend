@@ -25,7 +25,7 @@ public class User implements Serializable {
   @Column(nullable = false)
   private boolean isInstructor;
 
-  @ManyToMany
+  @ManyToMany(cascade = CascadeType.PERSIST)
   @JoinTable(
     name = "attends",
     joinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId"),
