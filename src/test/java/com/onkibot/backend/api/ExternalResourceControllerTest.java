@@ -10,14 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onkibot.backend.OnkibotBackendApplication;
-import com.onkibot.backend.database.entities.Category;
-import com.onkibot.backend.database.entities.Course;
-import com.onkibot.backend.database.entities.Resource;
-import com.onkibot.backend.database.entities.User;
-import com.onkibot.backend.database.repositories.CategoryRepository;
-import com.onkibot.backend.database.repositories.CourseRepository;
-import com.onkibot.backend.database.repositories.ResourceRepository;
-import com.onkibot.backend.database.repositories.UserRepository;
+import com.onkibot.backend.database.entities.*;
+import com.onkibot.backend.database.repositories.*;
 import com.onkibot.backend.models.*;
 import java.io.IOException;
 import java.util.List;
@@ -50,7 +44,8 @@ import org.springframework.web.context.WebApplicationContext;
   executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
   scripts = "classpath:./beforeTestRun.sql"
 )
-public class ResourceControllerTest {
+public class ExternalResourceControllerTest {
+  private static final String API_PATH_EXTERNAL_RESOURCE = "externals";
   private static final String API_PATH_RESOURCE = "resources";
   private static final String API_PATH_CATEGORY = "categories";
   private static final String API_URL_COURSE = OnkibotBackendApplication.API_BASE_URL + "/courses";
@@ -69,6 +64,8 @@ public class ResourceControllerTest {
 
   @Autowired private ResourceRepository resourceRepository;
 
+  @Autowired private ExternalResourceRepository externalResourceRepository;
+
   @Before
   public void setup() {
     this.mockMvc =
@@ -79,8 +76,41 @@ public class ResourceControllerTest {
 
   @Test
   @WithMockUser(authorities = {"USER"})
-  public void testGetNonExistingResourceWithNonExistingCategory() throws Exception {
+  public void testGetExistingExternalResourceWithWrongCategory() throws Exception {
+    User publisherUser = createRepositoryUser();
+    Course course1 = createRepositoryCourse();
+    Course course2 = createRepositoryCourse();
+    Category category1 = createRepositoryCategory(course1);
+    Category category2 = createRepositoryCategory(course2);
+    Resource resource1 = createRepositoryResource(category1, publisherUser);
+    Resource resource2 = createRepositoryResource(category2, publisherUser);
+    createRepositoryExternalResource(resource1, publisherUser);
+    createRepositoryExternalResource(resource2, publisherUser);
+
+    this.mockMvc
+        .perform(
+            get(API_URL_COURSE
+                    + "/"
+                    + course1.getCourseId()
+                    + "/"
+                    + API_PATH_CATEGORY
+                    + "/"
+                    + category2.getCategoryId()
+                    + "/"
+                    + API_PATH_RESOURCE
+                    + "/"
+                    + resource1.getResourceId()
+                    + "/"
+                    + API_PATH_EXTERNAL_RESOURCE)
+                .accept(MediaType.ALL))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @WithMockUser(authorities = {"USER"})
+  public void testGetNonExistingExternalResourceWithNonExistingResource() throws Exception {
     Course course = createRepositoryCourse();
+    Category category = createRepositoryCategory(course);
 
     this.mockMvc
         .perform(
@@ -89,21 +119,59 @@ public class ResourceControllerTest {
                     + course.getCourseId()
                     + "/"
                     + API_PATH_CATEGORY
+                    + "/"
+                    + category.getCategoryId()
+                    + "/"
+                    + API_PATH_RESOURCE
                     + "/2/"
-                    + API_PATH_RESOURCE)
+                    + API_PATH_EXTERNAL_RESOURCE)
                 .accept(MediaType.ALL))
         .andExpect(status().isNotFound());
   }
 
   @Test
   @WithMockUser(authorities = {"USER"})
-  public void testGetExistingResourceWithWrongCategory() throws Exception {
+  public void testGetExistingExistingResourceWithWrongCategory() throws Exception {
+    User publisherUser = createRepositoryUser();
+    Course course = createRepositoryCourse();
+    Category category = createRepositoryCategory(course);
+    Resource resource1 = createRepositoryResource(category, publisherUser);
+    Resource resource2 = createRepositoryResource(category, publisherUser);
+    createRepositoryExternalResource(resource1, publisherUser);
+    ExternalResource externalResource2 = createRepositoryExternalResource(resource2, publisherUser);
+
+    this.mockMvc
+        .perform(
+            get(API_URL_COURSE
+                    + "/"
+                    + course.getCourseId()
+                    + "/"
+                    + API_PATH_CATEGORY
+                    + "/"
+                    + category.getCategoryId()
+                    + "/"
+                    + API_PATH_RESOURCE
+                    + "/"
+                    + resource1.getResourceId()
+                    + "/"
+                    + API_PATH_EXTERNAL_RESOURCE
+                    + "/"
+                    + externalResource2.getExternalResourceId())
+                .accept(MediaType.ALL))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @WithMockUser(authorities = {"USER"})
+  public void testGetExistingExternalResourceListWithWrongResource() throws Exception {
     User publisherUser = createRepositoryUser();
     Course course = createRepositoryCourse();
     Category category1 = createRepositoryCategory(course);
     Category category2 = createRepositoryCategory(course);
-    createRepositoryResource(category1, publisherUser);
+    Resource resource1 = createRepositoryResource(category1, publisherUser);
     Resource resource2 = createRepositoryResource(category2, publisherUser);
+    createRepositoryExternalResource(resource1, publisherUser);
+    createRepositoryExternalResource(resource2, publisherUser);
 
     this.mockMvc
         .perform(
@@ -117,41 +185,19 @@ public class ResourceControllerTest {
                     + "/"
                     + API_PATH_RESOURCE
                     + "/"
-                    + resource2.getResourceId())
+                    + resource2.getResourceId()
+                    + "/"
+                    + API_PATH_EXTERNAL_RESOURCE)
                 .accept(MediaType.ALL))
         .andExpect(status().isNotFound());
   }
 
   @Test
-  @WithMockUser(authorities = {"USER"})
-  public void testGetExistingResourceListWithWrongCategory() throws Exception {
+  public void testGetNonExistingExternalResourceWithoutAuthentication() throws Exception {
     User publisherUser = createRepositoryUser();
-    Course course1 = createRepositoryCourse();
-    Course course2 = createRepositoryCourse();
-    Category category1 = createRepositoryCategory(course1);
-    Category category2 = createRepositoryCategory(course2);
-    createRepositoryResource(category1, publisherUser);
-    createRepositoryResource(category2, publisherUser);
-
-    this.mockMvc
-        .perform(
-            get(API_URL_COURSE
-                    + "/"
-                    + course1.getCourseId()
-                    + "/"
-                    + API_PATH_CATEGORY
-                    + "/"
-                    + category2.getCategoryId()
-                    + "/"
-                    + API_PATH_RESOURCE)
-                .accept(MediaType.ALL))
-        .andExpect(status().isNotFound());
-  }
-
-  @Test
-  public void testGetNonExistingResourceWithoutAuthentication() throws Exception {
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
+    Resource resource = createRepositoryResource(category, publisherUser);
     this.mockMvc
         .perform(
             get(API_URL_COURSE
@@ -163,6 +209,10 @@ public class ResourceControllerTest {
                     + category.getCategoryId()
                     + "/"
                     + API_PATH_RESOURCE
+                    + "/"
+                    + resource.getResourceId()
+                    + "/"
+                    + API_PATH_EXTERNAL_RESOURCE
                     + "/2")
                 .accept(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(status().isForbidden());
@@ -171,8 +221,11 @@ public class ResourceControllerTest {
   @Test
   @WithMockUser(authorities = {"USER"})
   public void testGetNonExistingResourceWithAuthentication() throws Exception {
+    User publisherUser = createRepositoryUser();
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
+    Resource resource = createRepositoryResource(category, publisherUser);
+
     this.mockMvc
         .perform(
             get(API_URL_COURSE
@@ -184,17 +237,22 @@ public class ResourceControllerTest {
                     + category.getCategoryId()
                     + "/"
                     + API_PATH_RESOURCE
+                    + "/"
+                    + resource.getResourceId()
+                    + "/"
+                    + API_PATH_EXTERNAL_RESOURCE
                     + "/2")
                 .accept(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(status().isNotFound());
   }
 
   @Test
-  public void testGetResourceWithoutAuthentication() throws Exception {
+  public void testGetExternalResourceWithoutAuthentication() throws Exception {
     User publisherUser = createRepositoryUser();
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
     Resource resource = createRepositoryResource(category, publisherUser);
+    ExternalResource externalResource = createRepositoryExternalResource(resource, publisherUser);
 
     this.mockMvc
         .perform(
@@ -208,18 +266,23 @@ public class ResourceControllerTest {
                     + "/"
                     + API_PATH_RESOURCE
                     + "/"
-                    + resource.getResourceId())
+                    + resource.getResourceId()
+                    + "/"
+                    + API_PATH_EXTERNAL_RESOURCE
+                    + "/"
+                    + externalResource.getExternalResourceId())
                 .accept(MediaType.ALL))
         .andExpect(status().isForbidden());
   }
 
   @Test
   @WithMockUser(authorities = {"USER"})
-  public void testGetResourceWithAuthentication() throws Exception {
+  public void testGetExternalResourceWithAuthentication() throws Exception {
     User publisherUser = createRepositoryUser();
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
     Resource resource = createRepositoryResource(category, publisherUser);
+    ExternalResource externalResource = createRepositoryExternalResource(resource, publisherUser);
 
     MvcResult result =
         this.mockMvc
@@ -234,7 +297,11 @@ public class ResourceControllerTest {
                         + "/"
                         + API_PATH_RESOURCE
                         + "/"
-                        + resource.getResourceId())
+                        + resource.getResourceId()
+                        + "/"
+                        + API_PATH_EXTERNAL_RESOURCE
+                        + "/"
+                        + externalResource.getExternalResourceId())
                     .accept(MediaType.ALL))
             .andExpect(status().isOk())
             .andReturn();
@@ -243,15 +310,17 @@ public class ResourceControllerTest {
 
     ObjectMapper mapper = new ObjectMapper();
 
-    assertResponseModel(resource, mapper.readValue(jsonString, ResourceModel.class));
+    assertResponseModel(
+        externalResource, mapper.readValue(jsonString, ExternalResourceModel.class));
   }
 
   @Test
-  public void testGetResourcesWithoutAuthentication() throws Exception {
+  public void testGetExternalResourcesWithoutAuthentication() throws Exception {
     User publisherUser = createRepositoryUser();
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
-    createRepositoryResource(category, publisherUser);
+    Resource resource = createRepositoryResource(category, publisherUser);
+    createRepositoryExternalResource(resource, publisherUser);
 
     this.mockMvc
         .perform(
@@ -263,19 +332,24 @@ public class ResourceControllerTest {
                     + "/"
                     + category.getCategoryId()
                     + "/"
-                    + API_PATH_RESOURCE)
+                    + API_PATH_RESOURCE
+                    + "/"
+                    + resource.getResourceId()
+                    + "/"
+                    + API_PATH_EXTERNAL_RESOURCE)
                 .accept(MediaType.ALL))
         .andExpect(status().isForbidden());
   }
 
   @Test
   @WithMockUser(authorities = {"USER"})
-  public void testGetResourcesWithAuthentication() throws Exception {
+  public void testGetExternalResourcesWithAuthentication() throws Exception {
     User publisherUser = createRepositoryUser();
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
-    Resource resource1 = createRepositoryResource(category, publisherUser);
-    Resource resource2 = createRepositoryResource(category, publisherUser);
+    Resource resource = createRepositoryResource(category, publisherUser);
+    ExternalResource externalResource1 = createRepositoryExternalResource(resource, publisherUser);
+    ExternalResource externalResource2 = createRepositoryExternalResource(resource, publisherUser);
 
     MvcResult result =
         this.mockMvc
@@ -288,7 +362,11 @@ public class ResourceControllerTest {
                         + "/"
                         + category.getCategoryId()
                         + "/"
-                        + API_PATH_RESOURCE)
+                        + API_PATH_RESOURCE
+                        + "/"
+                        + resource.getResourceId()
+                        + "/"
+                        + API_PATH_EXTERNAL_RESOURCE)
                     .accept(MediaType.ALL))
             .andExpect(status().isOk())
             .andReturn();
@@ -296,24 +374,26 @@ public class ResourceControllerTest {
     String jsonString = result.getResponse().getContentAsString();
 
     ObjectMapper mapper = new ObjectMapper();
-    List<ResourceModel> responseResources =
-        mapper.readValue(jsonString, new TypeReference<List<ResourceModel>>() {});
+    List<ExternalResourceModel> externalResponseResources =
+        mapper.readValue(jsonString, new TypeReference<List<ExternalResourceModel>>() {});
 
-    assertEquals(responseResources.size(), 2);
+    assertEquals(externalResponseResources.size(), 2);
 
-    assertResponseModel(resource1, responseResources.get(0));
-    assertResponseModel(resource2, responseResources.get(1));
+    assertResponseModel(externalResource1, externalResponseResources.get(0));
+    assertResponseModel(externalResource2, externalResponseResources.get(1));
   }
 
   @Test
-  public void testCreateResourceWithoutAuthentication() throws Exception {
+  public void testCreateExternalResourceWithoutAuthentication() throws Exception {
     ObjectMapper mapper = new ObjectMapper();
 
+    User publisherUser = createRepositoryUser();
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
+    Resource resource = createRepositoryResource(category, publisherUser);
 
-    ResourceInputModel resourceInputModel =
-        new ResourceInputModel("Random resource", "Random body");
+    ExternalResourceInputModel externalResourceInputModel =
+        new ExternalResourceInputModel("https://google.com");
 
     this.mockMvc
         .perform(
@@ -325,8 +405,12 @@ public class ResourceControllerTest {
                     + "/"
                     + category.getCategoryId()
                     + "/"
-                    + API_PATH_RESOURCE)
-                .content(mapper.writeValueAsString(resourceInputModel))
+                    + API_PATH_RESOURCE
+                    + "/"
+                    + resource.getResourceId()
+                    + "/"
+                    + API_PATH_EXTERNAL_RESOURCE)
+                .content(mapper.writeValueAsString(externalResourceInputModel))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.ALL))
         .andExpect(status().isForbidden());
@@ -337,22 +421,23 @@ public class ResourceControllerTest {
     username = "test@onkibot.com",
     authorities = {"USER"}
   )
-  public void testCreateResourceWithAuthentication() throws Exception {
+  public void testCreateExternalResourceWithAuthentication() throws Exception {
     ObjectMapper mapper = new ObjectMapper();
 
     User publisherUser = createRepositoryUser();
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
+    Resource resource = createRepositoryResource(category, publisherUser);
 
-    ResourceInputModel resourceInputModel =
-        new ResourceInputModel("Random resource", "Random body");
+    ExternalResourceInputModel externalResourceInputModel =
+        new ExternalResourceInputModel("https://google.com");
 
     MockHttpSession mockHttpSession =
         new MockHttpSession(
             webApplicationContext.getServletContext(), UUID.randomUUID().toString());
     mockHttpSession.setAttribute("userId", publisherUser.getUserId());
 
-    MvcResult categoryCreationResult =
+    MvcResult externalResourceCreationResult =
         this.mockMvc
             .perform(
                 post(API_URL_COURSE
@@ -363,9 +448,13 @@ public class ResourceControllerTest {
                         + "/"
                         + category.getCategoryId()
                         + "/"
-                        + API_PATH_RESOURCE)
+                        + API_PATH_RESOURCE
+                        + "/"
+                        + resource.getResourceId()
+                        + "/"
+                        + API_PATH_EXTERNAL_RESOURCE)
                     .session(mockHttpSession)
-                    .content(mapper.writeValueAsString(resourceInputModel))
+                    .content(mapper.writeValueAsString(externalResourceInputModel))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.ALL))
             .andExpect(status().isCreated())
@@ -374,10 +463,18 @@ public class ResourceControllerTest {
 
     assertInputModel(
         mapper,
-        category,
+        resource,
         publisherUser,
-        resourceInputModel,
-        categoryCreationResult.getResponse().getContentAsString());
+        externalResourceInputModel,
+        externalResourceCreationResult.getResponse().getContentAsString());
+  }
+
+  private ExternalResource createRepositoryExternalResource(Resource resource, User publisherUser) {
+    // Setup external resource
+    ExternalResource externalResource =
+        new ExternalResource(resource, UUID.randomUUID().toString(), publisherUser);
+    externalResourceRepository.save(externalResource);
+    return externalResource;
   }
 
   private Resource createRepositoryResource(Category category, User publisherUser) {
@@ -412,32 +509,33 @@ public class ResourceControllerTest {
     return user;
   }
 
-  private void assertResponseModel(Resource resource, ResourceModel responseModel)
-      throws IOException {
-    assertEquals((int) resource.getResourceId(), responseModel.getResourceId());
-    assertEquals((int) resource.getCategory().getCategoryId(), responseModel.getCategoryId());
+  private void assertResponseModel(
+      ExternalResource externalResource, ExternalResourceModel responseModel) throws IOException {
     assertEquals(
-        (int) resource.getPublisherUser().getUserId(),
+        (int) externalResource.getExternalResourceId(), responseModel.getExternalResourceId());
+    assertEquals(
+        (int) externalResource.getResource().getResourceId(), responseModel.getResourceId());
+    assertEquals(
+        (int) externalResource.getPublisherUser().getUserId(),
         responseModel.getPublisherUser().getUserId());
-    assertEquals(resource.getName(), responseModel.getName());
-    assertEquals(resource.getBody(), responseModel.getBody());
-    assertEquals(0, resource.getExternalResources().size());
+    assertEquals(externalResource.getUrl(), responseModel.getUrl());
   }
 
   private void assertInputModel(
       ObjectMapper mapper,
-      Category category,
+      Resource resource,
       User publisherUser,
-      ResourceInputModel resourceInputModel,
+      ExternalResourceInputModel externalResourceInputModel,
       String jsonString)
       throws IOException {
-    ResourceModel responseResourceModel = mapper.readValue(jsonString, ResourceModel.class);
+    ExternalResourceModel responseExternalResourceModel =
+        mapper.readValue(jsonString, ExternalResourceModel.class);
 
-    assertEquals(1, responseResourceModel.getResourceId());
-    assertEquals((int) category.getCategoryId(), responseResourceModel.getCategoryId());
+    assertEquals(1, responseExternalResourceModel.getExternalResourceId());
+    assertEquals((int) resource.getResourceId(), responseExternalResourceModel.getResourceId());
     assertEquals(
-        (int) publisherUser.getUserId(), responseResourceModel.getPublisherUser().getUserId());
-    assertEquals(resourceInputModel.getName(), responseResourceModel.getName());
-    assertEquals(resourceInputModel.getBody(), responseResourceModel.getBody());
+        (int) publisherUser.getUserId(),
+        responseExternalResourceModel.getPublisherUser().getUserId());
+    assertEquals(externalResourceInputModel.getUrl(), responseExternalResourceModel.getUrl());
   }
 }

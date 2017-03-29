@@ -12,7 +12,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.Course;
+import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.CourseRepository;
+import com.onkibot.backend.database.repositories.UserRepository;
 import com.onkibot.backend.models.*;
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -49,6 +53,10 @@ public class CourseControllerTest {
 
   @Autowired private CourseRepository courseRepository;
 
+  @Autowired private UserRepository userRepository;
+
+  @Autowired private PasswordEncoder passwordEncoder;
+
   @Before
   public void setup() {
     this.mockMvc =
@@ -65,8 +73,12 @@ public class CourseControllerTest {
   }
 
   @Test
-  @WithMockUser(authorities = {"USER"})
+  @WithMockUser(
+    username = "test@onkibot.com",
+    authorities = {"USER"}
+  )
   public void testGetNonExistingResourceWithAuthentication() throws Exception {
+    getAuthenticatedSession();
     this.mockMvc
         .perform(get(API_URL + "/2").accept(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(status().isNotFound());
@@ -82,8 +94,12 @@ public class CourseControllerTest {
   }
 
   @Test
-  @WithMockUser(authorities = {"USER"})
+  @WithMockUser(
+    username = "test@onkibot.com",
+    authorities = {"USER"}
+  )
   public void testGetCourseWithAuthentication() throws Exception {
+    getAuthenticatedSession();
     Course course = createRepositoryCourse();
 
     MvcResult result =
@@ -106,8 +122,12 @@ public class CourseControllerTest {
   }
 
   @Test
-  @WithMockUser(authorities = {"USER"})
+  @WithMockUser(
+    username = "test@onkibot.com",
+    authorities = {"USER"}
+  )
   public void testGetCoursesWithAuthentication() throws Exception {
+    getAuthenticatedSession();
     Course course1 = createRepositoryCourse();
     Course course2 = createRepositoryCourse();
 
@@ -145,8 +165,12 @@ public class CourseControllerTest {
   }
 
   @Test
-  @WithMockUser(authorities = {"USER"})
+  @WithMockUser(
+    username = "test@onkibot.com",
+    authorities = {"USER"}
+  )
   public void testCreateCourseWithAuthentication() throws Exception {
+    MockHttpSession mockHttpSession = getAuthenticatedSession();
     ObjectMapper mapper = new ObjectMapper();
 
     CourseInputModel courseInputModel = new CourseInputModel("Random course", "Random description");
@@ -155,6 +179,7 @@ public class CourseControllerTest {
         this.mockMvc
             .perform(
                 post(API_URL)
+                    .session(mockHttpSession)
                     .content(mapper.writeValueAsString(courseInputModel))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.ALL))
@@ -181,8 +206,12 @@ public class CourseControllerTest {
   }
 
   @Test
-  @WithMockUser(authorities = {"USER"})
+  @WithMockUser(
+    username = "test@onkibot.com",
+    authorities = {"USER"}
+  )
   public void testDeleteCourseWithAuthentication() throws Exception {
+    getAuthenticatedSession();
     Course course = createRepositoryCourse();
 
     this.mockMvc
@@ -195,6 +224,18 @@ public class CourseControllerTest {
     Course course = new Course(UUID.randomUUID().toString(), UUID.randomUUID().toString());
     courseRepository.save(course);
     return course;
+  }
+
+  private MockHttpSession getAuthenticatedSession() {
+    String encodedPassword = passwordEncoder.encode("testPassword123");
+    User user =
+        userRepository.save(new User("test@onkibot.com", encodedPassword, "OnkiBOT Tester", true));
+
+    MockHttpSession mockHttpSession =
+        new MockHttpSession(
+            webApplicationContext.getServletContext(), UUID.randomUUID().toString());
+    OnkibotBackendApplication.setSessionUser(user, mockHttpSession);
+    return mockHttpSession;
   }
 
   private void assertResponseModel(Course course, CourseModel responseModel) {

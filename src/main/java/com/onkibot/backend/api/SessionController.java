@@ -3,7 +3,6 @@ package com.onkibot.backend.api;
 import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.UserRepository;
-import com.onkibot.backend.exceptions.UserNotFoundException;
 import com.onkibot.backend.models.CredentialsModel;
 import com.onkibot.backend.models.UserDetailModel;
 import javax.servlet.http.HttpSession;
@@ -26,22 +25,16 @@ public class SessionController {
         new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword());
     SecurityContextHolder.getContext()
         .setAuthentication(authenticationManager.authenticate(authentication));
-    UserDetailModel userModel =
-        new UserDetailModel(userRepository.findByEmail(credentials.getEmail()).get());
-    session.setAttribute("userId", userModel.getUserId());
-    return userModel;
+    User user = userRepository.findByEmail(credentials.getEmail()).get();
+    OnkibotBackendApplication.setSessionUser(user, session);
+    return new UserDetailModel(user);
   }
 
   @RequestMapping(method = RequestMethod.GET)
   public UserDetailModel session(HttpSession session) {
-    Integer userId = (Integer) session.getAttribute("userId");
-    if (userId != null) {
-      User user =
-          userRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException(userId));
-      return new UserDetailModel(user);
-    } else {
-      return null;
-    }
+    return OnkibotBackendApplication.getSessionUser(userRepository, session)
+        .map(UserDetailModel::new)
+        .orElse(null);
   }
 
   @RequestMapping(method = RequestMethod.DELETE)

@@ -42,8 +42,4 @@ public class ExternalResource implements Serializable {
   public User getPublisherUser() {
     return publisherUser;
   }
-
-  public void setPublisherUser(User publisherUser) {
-    this.publisherUser = publisherUser;
-  }
 }

@@ -63,9 +63,9 @@ public class SessionControllerTest {
     User user = createUser(rawPassword);
     MvcResult loginResult = loginUser(user, rawPassword);
 
-    Integer userId = (Integer) this.mockHttpSession.getAttribute("userId");
-    assertNotNull(userId);
-    assertEquals(user.getUserId(), userId);
+    assertTrue(
+        OnkibotBackendApplication.getSessionUser(this.userRepository, this.mockHttpSession)
+            .isPresent());
 
     assertFalse(this.mockHttpSession.isInvalid());
 
