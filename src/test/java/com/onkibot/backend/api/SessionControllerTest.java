@@ -10,7 +10,7 @@ import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.UserRepository;
 import com.onkibot.backend.models.CredentialsModel;
-import com.onkibot.backend.models.UserModel;
+import com.onkibot.backend.models.UserDetailModel;
 import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,11 +72,13 @@ public class SessionControllerTest {
     String jsonString = loginResult.getResponse().getContentAsString();
 
     ObjectMapper mapper = new ObjectMapper();
-    UserModel responseUserModel = mapper.readValue(jsonString, UserModel.class);
+    UserDetailModel responseUserModel = mapper.readValue(jsonString, UserDetailModel.class);
     assertEquals(1, responseUserModel.getUserId());
     assertEquals(user.getEmail(), responseUserModel.getEmail());
     assertEquals(user.getName(), responseUserModel.getName());
     assertEquals(user.getIsInstructor(), responseUserModel.getIsInstructor());
+    assertEquals(user.getAttending().size(), responseUserModel.getAttending().size());
+    assertEquals(user.getResources().size(), responseUserModel.getResources().size());
 
     // Get the current session
     MvcResult sessionResult =

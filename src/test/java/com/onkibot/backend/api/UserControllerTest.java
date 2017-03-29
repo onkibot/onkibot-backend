@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.UserRepository;
-import com.onkibot.backend.models.UserDetailModel;
+import com.onkibot.backend.models.UserModel;
 import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
@@ -92,7 +92,7 @@ public class UserControllerTest {
 
     ObjectMapper mapper = new ObjectMapper();
 
-    assertResponseModel(user, mapper.readValue(jsonString, UserDetailModel.class));
+    assertResponseModel(user, mapper.readValue(jsonString, UserModel.class));
   }
 
   @Test
@@ -110,12 +110,9 @@ public class UserControllerTest {
         .andExpect(status().isNotFound());
   }
 
-  private void assertResponseModel(User user, UserDetailModel responseModel) throws IOException {
+  private void assertResponseModel(User user, UserModel responseModel) throws IOException {
     assertEquals(1, responseModel.getUserId());
-    assertEquals(user.getEmail(), responseModel.getEmail());
     assertEquals(user.getName(), responseModel.getName());
     assertEquals(user.getIsInstructor(), responseModel.getIsInstructor());
-    assertEquals(user.getAttending().size(), responseModel.getAttending().size());
-    assertEquals(user.getResources().size(), responseModel.getResources().size());
   }
 }

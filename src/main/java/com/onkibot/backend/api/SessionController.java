@@ -4,7 +4,7 @@ import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.UserRepository;
 import com.onkibot.backend.models.CredentialsModel;
-import com.onkibot.backend.models.UserModel;
+import com.onkibot.backend.models.UserDetailModel;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,20 +20,20 @@ public class SessionController {
   @Autowired private UserRepository userRepository;
 
   @RequestMapping(method = RequestMethod.POST)
-  public UserModel login(@RequestBody CredentialsModel credentials, HttpSession session) {
+  public UserDetailModel login(@RequestBody CredentialsModel credentials, HttpSession session) {
     Authentication authentication =
         new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword());
     SecurityContextHolder.getContext()
         .setAuthentication(authenticationManager.authenticate(authentication));
     User user = userRepository.findByEmail(credentials.getEmail()).get();
     OnkibotBackendApplication.setSessionUser(user, session);
-    return new UserModel(user);
+    return new UserDetailModel(user);
   }
 
   @RequestMapping(method = RequestMethod.GET)
-  public UserModel session(HttpSession session) {
+  public UserDetailModel session(HttpSession session) {
     return OnkibotBackendApplication.getSessionUser(userRepository, session)
-        .map(UserModel::new)
+        .map(UserDetailModel::new)
         .orElse(null);
   }
 
