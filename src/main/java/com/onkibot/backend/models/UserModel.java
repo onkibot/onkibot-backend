@@ -19,11 +19,7 @@ public class UserModel {
   }
 
   public UserModel(User entity) {
-    this(
-        entity.getUserId(),
-        entity.getName(),
-        entity.getCreatedTime(),
-        entity.getIsInstructor());
+    this(entity.getUserId(), entity.getName(), entity.getCreatedTime(), entity.getIsInstructor());
   }
 
   public int getUserId() {

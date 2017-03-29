@@ -26,7 +26,8 @@ public class SessionController {
         new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword());
     SecurityContextHolder.getContext()
         .setAuthentication(authenticationManager.authenticate(authentication));
-    UserDetailModel userModel = new UserDetailModel(userRepository.findByEmail(credentials.getEmail()).get());
+    UserDetailModel userModel =
+        new UserDetailModel(userRepository.findByEmail(credentials.getEmail()).get());
     session.setAttribute("userId", userModel.getUserId());
     return userModel;
   }
