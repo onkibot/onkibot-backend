@@ -66,14 +66,16 @@ CREATE TABLE IF NOT EXISTS external_resource(
 
 );
 
-CREATE TABLE IF NOT EXISTS external_resource_rating(
-        external_resource_id            INT                NOT NULL,
-        user_id                         INT                NOT NULL,
-        PRIMARY KEY(external_resource_id, user_id),
-        FOREIGN KEY (external_resource_id)
-                REFERENCES external_resource(external_resource_id)
+CREATE TABLE IF NOT EXISTS resource_feedback(
+        resource_feedback_id            INT             PRIMARY KEY AUTO_INCREMENT,
+        resource_id                     INT             NOT NULL,
+        comment                         TEXT            NOT NULL,
+        feedback_user_id                INT             NOT NULL,
+        FOREIGN KEY (resource_id)
+                REFERENCES resource(resource_id)
                 ON UPDATE CASCADE,
-        FOREIGN KEY (user_id)
+        FOREIGN KEY (feedback_user_id)
                 REFERENCES user(user_id)
                 ON UPDATE CASCADE
+
 );
