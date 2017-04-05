@@ -279,6 +279,7 @@ public class ExternalResourceControllerTest {
   @WithMockUser(authorities = {"USER"})
   public void testGetExternalResourceWithAuthentication() throws Exception {
     User publisherUser = createRepositoryUser();
+    MockHttpSession mockHttpSession = getAuthenticatedSession(publisherUser);
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
     Resource resource = createRepositoryResource(category, publisherUser);
@@ -302,6 +303,7 @@ public class ExternalResourceControllerTest {
                         + API_PATH_EXTERNAL_RESOURCE
                         + "/"
                         + externalResource.getExternalResourceId())
+                    .session(mockHttpSession)
                     .accept(MediaType.ALL))
             .andExpect(status().isOk())
             .andReturn();
@@ -345,6 +347,7 @@ public class ExternalResourceControllerTest {
   @WithMockUser(authorities = {"USER"})
   public void testGetExternalResourcesWithAuthentication() throws Exception {
     User publisherUser = createRepositoryUser();
+    MockHttpSession mockHttpSession = getAuthenticatedSession(publisherUser);
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
     Resource resource = createRepositoryResource(category, publisherUser);
@@ -367,6 +370,7 @@ public class ExternalResourceControllerTest {
                         + resource.getResourceId()
                         + "/"
                         + API_PATH_EXTERNAL_RESOURCE)
+                    .session(mockHttpSession)
                     .accept(MediaType.ALL))
             .andExpect(status().isOk())
             .andReturn();
@@ -537,5 +541,13 @@ public class ExternalResourceControllerTest {
         (int) publisherUser.getUserId(),
         responseExternalResourceModel.getPublisherUser().getUserId());
     assertEquals(externalResourceInputModel.getUrl(), responseExternalResourceModel.getUrl());
+  }
+
+  private MockHttpSession getAuthenticatedSession(User user) {
+    MockHttpSession mockHttpSession =
+        new MockHttpSession(
+            webApplicationContext.getServletContext(), UUID.randomUUID().toString());
+    OnkibotBackendApplication.setSessionUser(user, mockHttpSession);
+    return mockHttpSession;
   }
 }

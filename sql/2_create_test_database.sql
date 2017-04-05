@@ -79,3 +79,16 @@ CREATE TABLE IF NOT EXISTS resource_feedback(
                 ON UPDATE CASCADE,
         CONSTRAINT uc_resource_feedback UNIQUE (resource_id, feedback_user_id)
 );
+
+CREATE TABLE IF NOT EXISTS external_resource_approval(
+        external_resource_id    INT,
+        user_id                 INT,
+        PRIMARY KEY(external_resource_id, user_id),
+        FOREIGN KEY (external_resource_id)
+                REFERENCES external_resource(external_resource_id)
+                ON UPDATE CASCADE,
+        FOREIGN KEY (user_id)
+                REFERENCES user(user_id)
+                ON UPDATE CASCADE,
+        CONSTRAINT uc_external_resource_approval UNIQUE (external_resource_id, user_id)
+);
