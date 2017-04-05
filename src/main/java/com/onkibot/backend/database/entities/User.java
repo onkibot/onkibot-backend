@@ -36,6 +36,15 @@ public class User implements Serializable {
   @OneToMany(mappedBy = "publisherUser")
   private List<Resource> resources;
 
+  @OneToMany(cascade = CascadeType.PERSIST)
+  @JoinTable(
+    name = "approved_external_resources",
+    joinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId"),
+    inverseJoinColumns =
+        @JoinColumn(name = "externalResourceId", referencedColumnName = "externalResourceId")
+  )
+  private List<ExternalResource> approvedExternalResources;
+
   protected User() {}
 
   public User(String email, String encodedPassword, String name, boolean isInstructor) {
@@ -46,6 +55,7 @@ public class User implements Serializable {
     this.isInstructor = isInstructor;
     this.attending = new ArrayList<>();
     this.resources = new ArrayList<>();
+    this.approvedExternalResources = new ArrayList<>();
   }
 
   public Integer getUserId() {
@@ -78,5 +88,18 @@ public class User implements Serializable {
 
   public List<Resource> getResources() {
     return resources;
+  }
+
+  public List<ExternalResource> getApprovedExternalResources() {
+    return approvedExternalResources;
+  }
+
+  public boolean hasApprovedExternalResource(ExternalResource externalResource) {
+    for (ExternalResource approvedExternalResource : approvedExternalResources) {
+      if (approvedExternalResource.equals(externalResource)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

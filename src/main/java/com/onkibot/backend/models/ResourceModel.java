@@ -1,8 +1,10 @@
 package com.onkibot.backend.models;
 
+import com.onkibot.backend.database.entities.ExternalResource;
 import com.onkibot.backend.database.entities.Resource;
+import com.onkibot.backend.database.entities.User;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ResourceModel {
   private int resourceId;
@@ -20,12 +22,28 @@ public class ResourceModel {
     this.name = resource.getName();
     this.body = resource.getBody();
     this.publisherUser = new UserModel(resource.getPublisherUser());
-    this.externalResources =
-        resource
-            .getExternalResources()
-            .stream()
-            .map(ExternalResourceModel::new)
-            .collect(Collectors.toList());
+    this.externalResources = new ArrayList<>();
+
+    for (ExternalResource externalResource : resource.getExternalResources()) {
+      this.externalResources.add(new ExternalResourceModel(externalResource, false));
+    }
+  }
+
+  public ResourceModel(Resource resource, User sessionUser) {
+    this.resourceId = resource.getResourceId();
+    this.categoryId = resource.getCategory().getCategoryId();
+    this.name = resource.getName();
+    this.body = resource.getBody();
+    this.publisherUser = new UserModel(resource.getPublisherUser());
+    this.externalResources = new ArrayList<>();
+
+    for (ExternalResource externalResource : resource.getExternalResources()) {
+      if (sessionUser.hasApprovedExternalResource(externalResource)) {
+        this.externalResources.add(new ExternalResourceModel(externalResource, true));
+      } else {
+        this.externalResources.add(new ExternalResourceModel(externalResource, false));
+      }
+    }
   }
 
   public int getResourceId() {

@@ -7,14 +7,16 @@ public class ExternalResourceModel {
   private int resourceId;
   private String url;
   private UserModel publisherUser;
+  private boolean hasApproved;
 
   protected ExternalResourceModel() {}
 
-  public ExternalResourceModel(ExternalResource externalResource) {
+  public ExternalResourceModel(ExternalResource externalResource, boolean hasApproved) {
     this.externalResourceId = externalResource.getExternalResourceId();
     this.resourceId = externalResource.getResource().getResourceId();
     this.url = externalResource.getUrl();
     this.publisherUser = new UserModel(externalResource.getPublisherUser());
+    this.hasApproved = hasApproved;
   }
 
   public int getExternalResourceId() {
@@ -31,5 +33,9 @@ public class ExternalResourceModel {
 
   public UserModel getPublisherUser() {
     return publisherUser;
+  }
+
+  public boolean getHasApproved() {
+    return hasApproved;
   }
 }
