@@ -79,6 +79,10 @@ test {
         destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
         classDumpFile = file("$buildDir/jacoco/classpathdumps")
     }
+
+    testLogging {
+        showStandardStreams = true
+    }
 }
 
 jacocoTestReport {
