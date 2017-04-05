@@ -33,8 +33,8 @@ public class CourseAttendeeController {
   }
 
   @RequestMapping(method = RequestMethod.PUT, value = "/{userId}")
-  public ResponseEntity<Void> put(@PathVariable int courseId, @PathVariable int userId,
-      HttpSession session) {
+  public ResponseEntity<Void> put(
+      @PathVariable int courseId, @PathVariable int userId, HttpSession session) {
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     Course course = assertCourse(courseId, user);
     if (user.getIsInstructor()) {
@@ -48,8 +48,8 @@ public class CourseAttendeeController {
   }
 
   @RequestMapping(method = RequestMethod.DELETE, value = "/{userId}")
-  public ResponseEntity<Void> delete(@PathVariable int courseId, @PathVariable int userId,
-      HttpSession session) {
+  public ResponseEntity<Void> delete(
+      @PathVariable int courseId, @PathVariable int userId, HttpSession session) {
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     Course course = assertCourse(courseId, user);
     User deleteUser = assertUser(userId);
@@ -62,9 +62,10 @@ public class CourseAttendeeController {
   }
 
   private Course assertCourse(int courseId, User user) {
-    Course course = this.courseRepository
-        .findByCourseId(courseId)
-        .orElseThrow(() -> new CourseNotFoundException(courseId));
+    Course course =
+        this.courseRepository
+            .findByCourseId(courseId)
+            .orElseThrow(() -> new CourseNotFoundException(courseId));
     if (!course.getAttendees().contains(user)) {
       throw new CourseNotFoundException(courseId);
     }
