@@ -26,6 +26,9 @@ public class Resource {
   @ManyToMany(mappedBy = "resource")
   private List<ExternalResource> externalResources;
 
+  @ManyToMany(mappedBy = "resource")
+  private List<ResourceFeedback> feedback;
+
   protected Resource() {}
 
   public Resource(Category category, String name, String body, User publisherUser) {
@@ -34,6 +37,7 @@ public class Resource {
     this.body = body;
     this.publisherUser = publisherUser;
     this.externalResources = new ArrayList<>();
+    this.feedback = new ArrayList<>();
   }
 
   public Integer getResourceId() {
@@ -58,5 +62,9 @@ public class Resource {
 
   public List<ExternalResource> getExternalResources() {
     return externalResources;
+  }
+
+  public List<ResourceFeedback> getFeedback() {
+    return feedback;
   }
 }
