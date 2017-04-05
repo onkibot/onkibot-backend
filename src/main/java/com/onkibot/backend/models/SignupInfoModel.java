@@ -2,21 +2,25 @@ package com.onkibot.backend.models;
 
 public class SignupInfoModel extends CredentialsModel {
   private String name;
-  private boolean isInstructor;
+  private String usertype;
 
   protected SignupInfoModel() {}
 
-  public SignupInfoModel(String email, String password, String name, boolean isInstructor) {
+  public SignupInfoModel(String email, String password, String name, String usertype) {
     super(email, password);
     this.name = name;
-    this.isInstructor = isInstructor;
+    this.usertype = usertype;
   }
 
   public String getName() {
     return name;
   }
 
+  public String getUsertype() {
+    return usertype;
+  }
+
   public boolean getIsInstructor() {
-    return isInstructor;
+    return "instructor".equals(usertype);
   }
 }
