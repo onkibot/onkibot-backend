@@ -67,7 +67,7 @@ public class SignupControllerTest {
 
     // Create the user first
     SignupInfoModel signupInfoModel =
-        new SignupInfoModel("test@onkibot.com", rawPassword, "OnkiBOT Tester", true);
+        new SignupInfoModel("test@onkibot.com", rawPassword, "OnkiBOT Tester", "instructor");
 
     MvcResult signupResult =
         this.mockMvc
@@ -106,7 +106,7 @@ public class SignupControllerTest {
     // Create the user first
     ObjectMapper mapper = new ObjectMapper();
     SignupInfoModel signupInfoModel =
-        new SignupInfoModel("test@onkibot.com", rawPassword, "OnkiBOT Tester", true);
+        new SignupInfoModel("test@onkibot.com", rawPassword, "OnkiBOT Tester", "instructor");
     this.mockMvc
         .perform(
             post(API_URL)
