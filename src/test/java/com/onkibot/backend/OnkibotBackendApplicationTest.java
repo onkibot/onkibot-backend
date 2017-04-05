@@ -1,8 +1,6 @@
 package com.onkibot.backend;
 
 import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.UserRepository;
@@ -14,18 +12,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.util.SocketUtils;
 import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(OnkibotBackendApplication.class)
 @WebAppConfiguration
-@EnableJpaRepositories
 @Sql(
   executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
   scripts = "classpath:./beforeTestRun.sql"
@@ -48,7 +45,8 @@ public class OnkibotBackendApplicationTest {
 
   @Test
   public void testMain() {
-    OnkibotBackendApplication.main(new String[] {});
+    OnkibotBackendApplication.main(
+        new String[] {"--server.port=" + SocketUtils.findAvailableTcpPort()});
   }
 
   @Test
