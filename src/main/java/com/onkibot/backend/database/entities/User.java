@@ -95,11 +95,6 @@ public class User implements Serializable {
   }
 
   public boolean hasApprovedExternalResource(ExternalResource externalResource) {
-    for (ExternalResource approvedExternalResource : approvedExternalResources) {
-      if (approvedExternalResource.equals(externalResource)) {
-        return true;
-      }
-    }
-    return false;
+    return approvedExternalResources.contains(externalResource);
   }
 }

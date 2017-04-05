@@ -6,9 +6,8 @@ import com.onkibot.backend.database.ids.ExternalResourceApprovalId;
 import com.onkibot.backend.database.repositories.*;
 import com.onkibot.backend.exceptions.*;
 import com.onkibot.backend.models.*;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,14 +52,14 @@ public class ExternalResourceController {
       @PathVariable int resourceId,
       HttpSession session) {
     Resource resource = this.assertCourseCategoryResource(courseId, categoryId, resourceId);
-    List<ExternalResource> externalResources = resource.getExternalResources();
-    List<ExternalResourceModel> externalResourceModels = new ArrayList<>();
-    for (ExternalResource externalResource : externalResources) {
-      externalResourceModels.add(
-          new ExternalResourceModel(
-              externalResource, hasApprovedExternalResource(externalResource, session)));
-    }
-    return externalResourceModels;
+    return resource
+        .getExternalResources()
+        .stream()
+        .map(
+            externalResource ->
+                new ExternalResourceModel(
+                    externalResource, hasApprovedExternalResource(externalResource, session)))
+        .collect(Collectors.toList());
   }
 
   @RequestMapping(method = RequestMethod.POST)

@@ -13,7 +13,7 @@ public interface ExternalResourceApprovalRepository
   Collection<ExternalResourceApproval> findByExternalResourceApprovalIdApprovalUser(
       User approvalUser);
 
-  Optional<ExternalResourceApproval> findByExternalResourceApprovalIdExternalResource(
+  Collection<ExternalResourceApproval> findByExternalResourceApprovalIdExternalResource(
       ExternalResource externalResource);
 
   Optional<ExternalResourceApproval> findByExternalResourceApprovalId(
