@@ -89,5 +89,6 @@ CREATE TABLE IF NOT EXISTS external_resource_approval(
                 ON UPDATE CASCADE,
         FOREIGN KEY (user_id)
                 REFERENCES user(user_id)
-                ON UPDATE CASCADE
+                ON UPDATE CASCADE,
+        CONSTRAINT uc_external_resource_approval UNIQUE (external_resource_id, user_id)
 );
