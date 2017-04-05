@@ -62,8 +62,8 @@ CREATE TABLE IF NOT EXISTS external_resource(
                 ON UPDATE CASCADE,
         FOREIGN KEY (publisher_user_id)
                 REFERENCES user(user_id)
-                ON UPDATE CASCADE
-
+                ON UPDATE CASCADE,
+        CONSTRAINT uc_external_resource UNIQUE (resource_id, url)
 );
 
 CREATE TABLE IF NOT EXISTS resource_feedback(
@@ -76,6 +76,6 @@ CREATE TABLE IF NOT EXISTS resource_feedback(
                 ON UPDATE CASCADE,
         FOREIGN KEY (feedback_user_id)
                 REFERENCES user(user_id)
-                ON UPDATE CASCADE
-
+                ON UPDATE CASCADE,
+        CONSTRAINT uc_resource_feedback UNIQUE (resource_id, feedback_user_id)
 );
