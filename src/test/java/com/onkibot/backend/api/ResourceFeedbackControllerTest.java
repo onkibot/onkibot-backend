@@ -343,12 +343,13 @@ public class ResourceFeedbackControllerTest {
   @Test
   @WithMockUser(authorities = {"USER"})
   public void testGetResourceFeedbacksWithAuthentication() throws Exception {
-    User feedbackUser = createRepositoryUser();
+    User feedbackUser1 = createRepositoryUser();
+    User feedbackUser2 = createRepositoryUser("test2@onkibot.com", "OnkiBOT Tester2");
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
-    Resource resource = createRepositoryResource(category, feedbackUser);
-    ResourceFeedback resourceFeedback1 = createRepositoryResourceFeedback(resource, feedbackUser);
-    ResourceFeedback resourceFeedback2 = createRepositoryResourceFeedback(resource, feedbackUser);
+    Resource resource = createRepositoryResource(category, feedbackUser1);
+    ResourceFeedback resourceFeedback1 = createRepositoryResourceFeedback(resource, feedbackUser1);
+    ResourceFeedback resourceFeedback2 = createRepositoryResourceFeedback(resource, feedbackUser2);
 
     MvcResult result =
         this.mockMvc
@@ -545,7 +546,7 @@ public class ResourceFeedbackControllerTest {
   )
   public void testDeleteAnotherUserResourceFeedbackWithAuthentication() throws Exception {
     User feedbackUser1 = createRepositoryUser();
-    User feedbackUser2 = createRepositoryUser("test2@onkibot.com");
+    User feedbackUser2 = createRepositoryUser("test2@onkibot.com", "OnkiBOT Tester2");
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
     Resource resource = createRepositoryResource(category, feedbackUser2);
@@ -612,13 +613,13 @@ public class ResourceFeedbackControllerTest {
   }
 
   private User createRepositoryUser() {
-    return createRepositoryUser("test@onkibot.com");
+    return createRepositoryUser("test@onkibot.com", "OnkiBOT Tester");
   }
 
-  private User createRepositoryUser(String email) {
+  private User createRepositoryUser(String email, String username) {
     String rawPassword = "testPassword123";
     String encodedPassword = passwordEncoder.encode(rawPassword);
-    User user = new User(email, encodedPassword, "OnkiBOT Tester", true);
+    User user = new User(email, encodedPassword, username, true);
     userRepository.save(user);
     return user;
   }
