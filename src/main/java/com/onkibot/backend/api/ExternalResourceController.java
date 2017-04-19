@@ -81,6 +81,25 @@ public class ExternalResourceController {
         new ExternalResourceModel(newExternalResource, false), HttpStatus.CREATED);
   }
 
+  @RequestMapping(method = RequestMethod.DELETE, value = "/{externalResourceId}")
+  public ResponseEntity<Void> delete(
+      @PathVariable int courseId,
+      @PathVariable int categoryId,
+      @PathVariable int resourceId,
+      @PathVariable int externalResourceId,
+      HttpSession session) {
+    User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
+    ExternalResource externalResource =
+        this.assertCourseCategoryExternalResource(
+            courseId, categoryId, resourceId, externalResourceId);
+    if (!user.getIsInstructor()
+        || !externalResource.getPublisherUser().getUserId().equals(user.getUserId())) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+    externalResourceRepository.delete(externalResource);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
   private Course assertCourse(int courseId) {
     return this.courseRepository
         .findByCourseId(courseId)

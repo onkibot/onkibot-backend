@@ -10,9 +10,7 @@ import com.onkibot.backend.exceptions.CategoryNotFoundException;
 import com.onkibot.backend.exceptions.CourseNotFoundException;
 import com.onkibot.backend.exceptions.ResourceNotFoundException;
 import com.onkibot.backend.models.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,8 +46,8 @@ public class ResourceController {
       @PathVariable int courseId, @PathVariable int categoryId, HttpSession session) {
     User sessionUser = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     Category category = this.assertCourseCategory(courseId, categoryId);
-    List<Resource> resources = category.getResources();
-    List<ResourceModel> resourceModels = new ArrayList<>();
+    Set<Resource> resources = category.getResources();
+    Set<ResourceModel> resourceModels = new LinkedHashSet<>();
 
     for (Resource resource : resources) {
       resourceModels.add(new ResourceModel(resource, sessionUser));
@@ -70,6 +68,22 @@ public class ResourceController {
         resourceRepository.save(
             new Resource(category, resourceInput.getName(), resourceInput.getBody(), user));
     return new ResponseEntity<>(new ResourceModel(newResource), HttpStatus.CREATED);
+  }
+
+  @RequestMapping(method = RequestMethod.DELETE, value = "/{resourceId}")
+  public ResponseEntity<Void> delete(
+      @PathVariable int courseId,
+      @PathVariable int categoryId,
+      @PathVariable int resourceId,
+      HttpSession session) {
+    User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
+    Resource resource = this.assertCourseCategoryResource(courseId, categoryId, resourceId);
+    if (!user.getIsInstructor()
+        || !resource.getPublisherUser().getUserId().equals(user.getUserId())) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+    resourceRepository.delete(resource);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   private Course assertCourse(int courseId) {

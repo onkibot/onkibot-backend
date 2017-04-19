@@ -78,9 +78,9 @@ public class CourseControllerTest {
     authorities = {"USER"}
   )
   public void testGetNonExistingResourceWithAuthentication() throws Exception {
-    getAuthenticatedSession();
+    MockHttpSession session = getAuthenticatedSession();
     this.mockMvc
-        .perform(get(API_URL + "/2").accept(MediaType.APPLICATION_JSON_UTF8))
+        .perform(get(API_URL + "/2").session(session).accept(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(status().isNotFound());
   }
 
@@ -99,12 +99,14 @@ public class CourseControllerTest {
     authorities = {"USER"}
   )
   public void testGetCourseWithAuthentication() throws Exception {
-    getAuthenticatedSession();
-    Course course = createRepositoryCourse();
+    User user = createRepositoryUser();
+    MockHttpSession session = getAuthenticatedSession(user);
+    Course course = createRepositoryCourse(user);
 
     MvcResult result =
         this.mockMvc
-            .perform(get(API_URL + "/" + course.getCourseId()).accept(MediaType.ALL))
+            .perform(
+                get(API_URL + "/" + course.getCourseId()).session(session).accept(MediaType.ALL))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -127,13 +129,20 @@ public class CourseControllerTest {
     authorities = {"USER"}
   )
   public void testGetCoursesWithAuthentication() throws Exception {
-    getAuthenticatedSession();
+    User user = createRepositoryUser();
+    MockHttpSession session = getAuthenticatedSession(user);
     Course course1 = createRepositoryCourse();
     Course course2 = createRepositoryCourse();
 
+    user.getAttending().add(course1);
+    course1.getAttendees().add(user);
+    user.getAttending().add(course2);
+    course2.getAttendees().add(user);
+    userRepository.save(user);
+
     MvcResult result =
         this.mockMvc
-            .perform(get(API_URL).accept(MediaType.ALL))
+            .perform(get(API_URL).accept(MediaType.ALL).session(session))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -211,25 +220,46 @@ public class CourseControllerTest {
     authorities = {"USER"}
   )
   public void testDeleteCourseWithAuthentication() throws Exception {
-    getAuthenticatedSession();
-    Course course = createRepositoryCourse();
+    User user = createRepositoryUser();
+    MockHttpSession session = getAuthenticatedSession(user);
+    Course course = createRepositoryCourse(user);
 
     this.mockMvc
-        .perform(delete(API_URL + "/" + course.getCourseId()).accept(MediaType.ALL))
+        .perform(
+            delete(API_URL + "/" + course.getCourseId()).session(session).accept(MediaType.ALL))
         .andExpect(status().isNoContent());
   }
 
   private Course createRepositoryCourse() {
+    return createRepositoryCourse(null);
+  }
+
+  private Course createRepositoryCourse(User user) {
     // Setup course
     Course course = new Course(UUID.randomUUID().toString(), UUID.randomUUID().toString());
-    courseRepository.save(course);
+    course = courseRepository.save(course);
+    if (user != null) {
+      user.getAttending().add(course);
+      userRepository.save(user);
+      course.getAttendees().add(user);
+    }
     return course;
   }
 
-  private MockHttpSession getAuthenticatedSession() {
+  private User createRepositoryUser() {
     String encodedPassword = passwordEncoder.encode("testPassword123");
-    User user =
-        userRepository.save(new User("test@onkibot.com", encodedPassword, "OnkiBOT Tester", true));
+    return userRepository.save(
+        new User("test@onkibot.com", encodedPassword, "OnkiBOT Tester", true));
+  }
+
+  private MockHttpSession getAuthenticatedSession() {
+    return getAuthenticatedSession(null);
+  }
+
+  private MockHttpSession getAuthenticatedSession(User user) {
+    if (user == null) {
+      user = createRepositoryUser();
+    }
 
     MockHttpSession mockHttpSession =
         new MockHttpSession(

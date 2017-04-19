@@ -48,8 +48,12 @@ public class CourseController {
   }
 
   @RequestMapping(method = RequestMethod.DELETE, value = "/{courseId}")
-  public ResponseEntity<Void> delete(@PathVariable int courseId) {
+  public ResponseEntity<Void> delete(@PathVariable int courseId, HttpSession session) {
+    User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     Course course = assertCourse(courseId);
+    if (!user.getIsInstructor() || !user.isAttending(course)) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
     courseRepository.delete(course);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
