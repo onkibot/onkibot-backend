@@ -28,8 +28,8 @@ public class ExternalResourceApprovalController {
 
   @Autowired private UserRepository userRepository;
 
-  @RequestMapping(method = RequestMethod.POST)
-  ResponseEntity<Void> post(
+  @RequestMapping(method = RequestMethod.PUT)
+  ResponseEntity<Void> put(
       @PathVariable int courseId,
       @PathVariable int categoryId,
       @PathVariable int resourceId,
@@ -62,6 +62,9 @@ public class ExternalResourceApprovalController {
         assertCourseCategoryExternalResource(courseId, categoryId, resourceId, externalResourceId);
     ExternalResourceApproval externalResourceApproval =
         assertExternalResourceApproval(externalResource, sessionUser);
+    if (!externalResourceApproval.getApprovalUser().getUserId().equals(sessionUser.getUserId())) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
     externalResourceApprovalRepository.delete(externalResourceApproval);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }

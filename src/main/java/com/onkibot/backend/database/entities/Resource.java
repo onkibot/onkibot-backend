@@ -1,7 +1,6 @@
 package com.onkibot.backend.database.entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import javax.persistence.*;
 
 @Entity
@@ -24,10 +23,12 @@ public class Resource {
   private User publisherUser;
 
   @ManyToMany(mappedBy = "resource")
-  private List<ExternalResource> externalResources;
+  @OrderBy("external_resource_id")
+  private Set<ExternalResource> externalResources;
 
   @ManyToMany(mappedBy = "resource")
-  private List<ResourceFeedback> feedback;
+  @OrderBy("resource_feedback_id")
+  private Set<ResourceFeedback> feedback;
 
   protected Resource() {}
 
@@ -36,8 +37,8 @@ public class Resource {
     this.name = name;
     this.body = body;
     this.publisherUser = publisherUser;
-    this.externalResources = new ArrayList<>();
-    this.feedback = new ArrayList<>();
+    this.externalResources = new LinkedHashSet<>();
+    this.feedback = new LinkedHashSet<>();
   }
 
   public Integer getResourceId() {
@@ -60,11 +61,11 @@ public class Resource {
     return publisherUser;
   }
 
-  public List<ExternalResource> getExternalResources() {
+  public Set<ExternalResource> getExternalResources() {
     return externalResources;
   }
 
-  public List<ResourceFeedback> getFeedback() {
+  public Set<ResourceFeedback> getFeedback() {
     return feedback;
   }
 }

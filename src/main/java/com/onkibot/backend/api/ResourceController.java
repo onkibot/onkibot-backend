@@ -10,9 +10,7 @@ import com.onkibot.backend.exceptions.CategoryNotFoundException;
 import com.onkibot.backend.exceptions.CourseNotFoundException;
 import com.onkibot.backend.exceptions.ResourceNotFoundException;
 import com.onkibot.backend.models.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,8 +46,8 @@ public class ResourceController {
       @PathVariable int courseId, @PathVariable int categoryId, HttpSession session) {
     User sessionUser = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     Category category = this.assertCourseCategory(courseId, categoryId);
-    List<Resource> resources = category.getResources();
-    List<ResourceModel> resourceModels = new ArrayList<>();
+    Set<Resource> resources = category.getResources();
+    Set<ResourceModel> resourceModels = new LinkedHashSet<>();
 
     for (Resource resource : resources) {
       resourceModels.add(new ResourceModel(resource, sessionUser));

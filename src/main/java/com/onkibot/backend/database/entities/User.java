@@ -1,9 +1,8 @@
 package com.onkibot.backend.database.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import javax.persistence.*;
 
 @Entity
@@ -25,25 +24,22 @@ public class User implements Serializable {
   @Column(nullable = false)
   private boolean isInstructor;
 
-  @ManyToMany(cascade = CascadeType.PERSIST)
+  @ManyToMany(cascade = CascadeType.ALL)
+  @OrderBy("course_id")
   @JoinTable(
     name = "attends",
     joinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId"),
     inverseJoinColumns = @JoinColumn(name = "courseId", referencedColumnName = "courseId")
   )
-  private List<Course> attending;
+  private Set<Course> attending;
 
   @OneToMany(mappedBy = "publisherUser")
-  private List<Resource> resources;
+  @OrderBy("resource_id")
+  private Set<Resource> resources;
 
-  @OneToMany(cascade = CascadeType.PERSIST)
-  @JoinTable(
-    name = "approved_external_resources",
-    joinColumns = @JoinColumn(name = "userId", referencedColumnName = "userId"),
-    inverseJoinColumns =
-        @JoinColumn(name = "externalResourceId", referencedColumnName = "externalResourceId")
-  )
-  private List<ExternalResource> approvedExternalResources;
+  @OneToMany(mappedBy = "externalResourceApprovalId.approvalUser", fetch = FetchType.LAZY)
+  @OrderBy("external_resource_id")
+  private Set<ExternalResourceApproval> externalResourceApprovals;
 
   protected User() {}
 
@@ -53,9 +49,9 @@ public class User implements Serializable {
     this.name = name;
     this.createdTime = new Date();
     this.isInstructor = isInstructor;
-    this.attending = new ArrayList<>();
-    this.resources = new ArrayList<>();
-    this.approvedExternalResources = new ArrayList<>();
+    this.attending = new LinkedHashSet<>();
+    this.resources = new LinkedHashSet<>();
+    this.externalResourceApprovals = new LinkedHashSet<>();
   }
 
   public Integer getUserId() {
@@ -82,19 +78,34 @@ public class User implements Serializable {
     return isInstructor;
   }
 
-  public List<Course> getAttending() {
+  public Set<Course> getAttending() {
     return attending;
   }
 
-  public List<Resource> getResources() {
+  public boolean isAttending(Course course) {
+    return this.attending.contains(course);
+  }
+
+  public Set<Resource> getResources() {
     return resources;
   }
 
-  public List<ExternalResource> getApprovedExternalResources() {
-    return approvedExternalResources;
+  public Set<ExternalResourceApproval> getExternalResourceApprovals() {
+    return externalResourceApprovals;
+  }
+
+  public Set<ExternalResource> getApprovedExternalResources() {
+    return externalResourceApprovals
+        .stream()
+        .map(ExternalResourceApproval::getExternalResource)
+        .collect(Collectors.toSet());
   }
 
   public boolean hasApprovedExternalResource(ExternalResource externalResource) {
-    return approvedExternalResources.contains(externalResource);
+    return externalResourceApprovals
+        .stream()
+        .anyMatch(
+            externalResourceApproval ->
+                externalResourceApproval.getExternalResource().equals(externalResource));
   }
 }

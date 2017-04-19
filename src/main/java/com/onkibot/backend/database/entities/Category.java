@@ -1,8 +1,7 @@
 package com.onkibot.backend.database.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import javax.persistence.*;
 
 @Entity
@@ -20,7 +19,8 @@ public class Category implements Serializable {
   private String description;
 
   @OneToMany(mappedBy = "category")
-  private List<Resource> resources;
+  @OrderBy("resource_id")
+  private Set<Resource> resources;
 
   protected Category() {}
 
@@ -28,7 +28,7 @@ public class Category implements Serializable {
     this.course = course;
     this.name = name;
     this.description = description;
-    this.resources = new ArrayList<>();
+    this.resources = new LinkedHashSet<>();
   }
 
   public Integer getCategoryId() {
@@ -47,7 +47,7 @@ public class Category implements Serializable {
     return description;
   }
 
-  public List<Resource> getResources() {
+  public Set<Resource> getResources() {
     return resources;
   }
 }
