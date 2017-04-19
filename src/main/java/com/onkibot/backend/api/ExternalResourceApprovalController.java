@@ -5,9 +5,6 @@ import com.onkibot.backend.database.entities.*;
 import com.onkibot.backend.database.ids.ExternalResourceApprovalId;
 import com.onkibot.backend.database.repositories.*;
 import com.onkibot.backend.exceptions.*;
-import com.onkibot.backend.models.*;
-import java.util.Collection;
-import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(
     OnkibotBackendApplication.API_BASE_URL
-        + "/courses/{courseId}/categories/{categoryId}/resources/{resourceId}/externals")
-public class ExternalResourceController {
+        + "/courses/{courseId}/categories/{categoryId}/resources/{resourceId}/externals/{externalResourceId}/approve")
+public class ExternalResourceApprovalController {
   @Autowired private ExternalResourceApprovalRepository externalResourceApprovalRepository;
 
   @Autowired private ExternalResourceRepository externalResourceRepository;
@@ -31,54 +28,42 @@ public class ExternalResourceController {
 
   @Autowired private UserRepository userRepository;
 
-  @RequestMapping(method = RequestMethod.GET, value = "/{externalResourceId}")
-  ExternalResourceModel get(
+  @RequestMapping(method = RequestMethod.POST)
+  ResponseEntity<Void> post(
       @PathVariable int courseId,
       @PathVariable int categoryId,
       @PathVariable int resourceId,
       @PathVariable int externalResourceId,
       HttpSession session) {
+    User sessionUser = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     ExternalResource externalResource =
-        this.assertCourseCategoryExternalResource(
-            courseId, categoryId, resourceId, externalResourceId);
-    return new ExternalResourceModel(
-        externalResource, hasApprovedExternalResource(externalResource, session));
+        assertCourseCategoryExternalResource(courseId, categoryId, resourceId, externalResourceId);
+    ExternalResourceApprovalId externalResourceApprovalId =
+        new ExternalResourceApprovalId(externalResource, sessionUser);
+    if (externalResourceApprovalRepository
+        .findByExternalResourceApprovalId(externalResourceApprovalId)
+        .isPresent()) {
+      return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
+    externalResourceApprovalRepository.save(
+        new ExternalResourceApproval(externalResourceApprovalId));
+    return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
-  @RequestMapping(method = RequestMethod.GET)
-  Collection<ExternalResourceModel> getAll(
+  @RequestMapping(method = RequestMethod.DELETE)
+  public ResponseEntity<Void> delete(
       @PathVariable int courseId,
       @PathVariable int categoryId,
       @PathVariable int resourceId,
+      @PathVariable int externalResourceId,
       HttpSession session) {
-    Resource resource = this.assertCourseCategoryResource(courseId, categoryId, resourceId);
-    return resource
-        .getExternalResources()
-        .stream()
-        .map(
-            externalResource ->
-                new ExternalResourceModel(
-                    externalResource, hasApprovedExternalResource(externalResource, session)))
-        .collect(Collectors.toList());
-  }
-
-  @RequestMapping(method = RequestMethod.POST)
-  ResponseEntity<ExternalResourceModel> post(
-      @PathVariable int courseId,
-      @PathVariable int categoryId,
-      @PathVariable int resourceId,
-      @RequestBody ExternalResourceInputModel externalResourceInput,
-      HttpSession session) {
-
-    int userId = (int) session.getAttribute("userId");
-    User user =
-        userRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException(userId));
-    Resource resource = this.assertCourseCategoryResource(courseId, categoryId, resourceId);
-    ExternalResource newExternalResource =
-        externalResourceRepository.save(
-            new ExternalResource(resource, externalResourceInput.getUrl(), user));
-    return new ResponseEntity<>(
-        new ExternalResourceModel(newExternalResource, false), HttpStatus.CREATED);
+    User sessionUser = OnkibotBackendApplication.assertSessionUser(userRepository, session);
+    ExternalResource externalResource =
+        assertCourseCategoryExternalResource(courseId, categoryId, resourceId, externalResourceId);
+    ExternalResourceApproval externalResourceApproval =
+        assertExternalResourceApproval(externalResource, sessionUser);
+    externalResourceApprovalRepository.delete(externalResourceApproval);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   private Course assertCourse(int courseId) {
@@ -124,13 +109,12 @@ public class ExternalResourceController {
     return externalResource;
   }
 
-  private boolean hasApprovedExternalResource(
-      ExternalResource externalResource, HttpSession session) {
-    User sessionUser = OnkibotBackendApplication.assertSessionUser(userRepository, session);
+  private ExternalResourceApproval assertExternalResourceApproval(
+      ExternalResource externalResource, User approvalUser) {
     ExternalResourceApprovalId externalResourceApprovalId =
-        new ExternalResourceApprovalId(externalResource, sessionUser);
-    return externalResourceApprovalRepository
+        new ExternalResourceApprovalId(externalResource, approvalUser);
+    return this.externalResourceApprovalRepository
         .findByExternalResourceApprovalId(externalResourceApprovalId)
-        .isPresent();
+        .orElseThrow(ExternalResourceApprovalNotFoundException::new);
   }
 }

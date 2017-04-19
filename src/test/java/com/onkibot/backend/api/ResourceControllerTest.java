@@ -78,7 +78,10 @@ public class ResourceControllerTest {
   }
 
   @Test
-  @WithMockUser(authorities = {"USER"})
+  @WithMockUser(
+    username = "test@onkibot.com",
+    authorities = {"USER"}
+  )
   public void testGetNonExistingResourceWithNonExistingCategory() throws Exception {
     Course course = createRepositoryCourse();
 
@@ -96,7 +99,10 @@ public class ResourceControllerTest {
   }
 
   @Test
-  @WithMockUser(authorities = {"USER"})
+  @WithMockUser(
+    username = "test@onkibot.com",
+    authorities = {"USER"}
+  )
   public void testGetExistingResourceWithWrongCategory() throws Exception {
     User publisherUser = createRepositoryUser();
     Course course = createRepositoryCourse();
@@ -123,7 +129,10 @@ public class ResourceControllerTest {
   }
 
   @Test
-  @WithMockUser(authorities = {"USER"})
+  @WithMockUser(
+    username = "test@onkibot.com",
+    authorities = {"USER"}
+  )
   public void testGetExistingResourceListWithWrongCategory() throws Exception {
     User publisherUser = createRepositoryUser();
     Course course1 = createRepositoryCourse();
@@ -169,7 +178,10 @@ public class ResourceControllerTest {
   }
 
   @Test
-  @WithMockUser(authorities = {"USER"})
+  @WithMockUser(
+    username = "test@onkibot.com",
+    authorities = {"USER"}
+  )
   public void testGetNonExistingResourceWithAuthentication() throws Exception {
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
@@ -214,9 +226,13 @@ public class ResourceControllerTest {
   }
 
   @Test
-  @WithMockUser(authorities = {"USER"})
+  @WithMockUser(
+    username = "test@onkibot.com",
+    authorities = {"USER"}
+  )
   public void testGetResourceWithAuthentication() throws Exception {
     User publisherUser = createRepositoryUser();
+    MockHttpSession mockHttpSession = getAuthenticatedSession(publisherUser);
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
     Resource resource = createRepositoryResource(category, publisherUser);
@@ -235,6 +251,7 @@ public class ResourceControllerTest {
                         + API_PATH_RESOURCE
                         + "/"
                         + resource.getResourceId())
+                    .session(mockHttpSession)
                     .accept(MediaType.ALL))
             .andExpect(status().isOk())
             .andReturn();
@@ -269,9 +286,13 @@ public class ResourceControllerTest {
   }
 
   @Test
-  @WithMockUser(authorities = {"USER"})
+  @WithMockUser(
+    username = "test@onkibot.com",
+    authorities = {"USER"}
+  )
   public void testGetResourcesWithAuthentication() throws Exception {
     User publisherUser = createRepositoryUser();
+    MockHttpSession mockHttpSession = getAuthenticatedSession(publisherUser);
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
     Resource resource1 = createRepositoryResource(category, publisherUser);
@@ -289,6 +310,7 @@ public class ResourceControllerTest {
                         + category.getCategoryId()
                         + "/"
                         + API_PATH_RESOURCE)
+                    .session(mockHttpSession)
                     .accept(MediaType.ALL))
             .andExpect(status().isOk())
             .andReturn();
@@ -439,5 +461,13 @@ public class ResourceControllerTest {
         (int) publisherUser.getUserId(), responseResourceModel.getPublisherUser().getUserId());
     assertEquals(resourceInputModel.getName(), responseResourceModel.getName());
     assertEquals(resourceInputModel.getBody(), responseResourceModel.getBody());
+  }
+
+  private MockHttpSession getAuthenticatedSession(User user) {
+    MockHttpSession mockHttpSession =
+        new MockHttpSession(
+            webApplicationContext.getServletContext(), UUID.randomUUID().toString());
+    OnkibotBackendApplication.setSessionUser(user, mockHttpSession);
+    return mockHttpSession;
   }
 }

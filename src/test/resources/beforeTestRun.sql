@@ -1,5 +1,6 @@
 SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE external_resource_rating;
+TRUNCATE resource_feedback;
+TRUNCATE external_resource_approval;
 TRUNCATE external_resource;
 TRUNCATE resource;
 TRUNCATE category;
