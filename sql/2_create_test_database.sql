@@ -62,18 +62,33 @@ CREATE TABLE IF NOT EXISTS external_resource(
                 ON UPDATE CASCADE,
         FOREIGN KEY (publisher_user_id)
                 REFERENCES user(user_id)
-                ON UPDATE CASCADE
-
+                ON UPDATE CASCADE,
+        CONSTRAINT uc_external_resource UNIQUE (resource_id, url)
 );
 
-CREATE TABLE IF NOT EXISTS external_resource_rating(
-        external_resource_id            INT                NOT NULL,
-        user_id                         INT                NOT NULL,
+CREATE TABLE IF NOT EXISTS resource_feedback(
+        resource_feedback_id            INT             PRIMARY KEY AUTO_INCREMENT,
+        resource_id                     INT             NOT NULL,
+        comment                         TEXT            NOT NULL,
+        feedback_user_id                INT             NOT NULL,
+        FOREIGN KEY (resource_id)
+                REFERENCES resource(resource_id)
+                ON UPDATE CASCADE,
+        FOREIGN KEY (feedback_user_id)
+                REFERENCES user(user_id)
+                ON UPDATE CASCADE,
+        CONSTRAINT uc_resource_feedback UNIQUE (resource_id, feedback_user_id)
+);
+
+CREATE TABLE IF NOT EXISTS external_resource_approval(
+        external_resource_id    INT,
+        user_id                 INT,
         PRIMARY KEY(external_resource_id, user_id),
         FOREIGN KEY (external_resource_id)
                 REFERENCES external_resource(external_resource_id)
                 ON UPDATE CASCADE,
         FOREIGN KEY (user_id)
                 REFERENCES user(user_id)
-                ON UPDATE CASCADE
+                ON UPDATE CASCADE,
+        CONSTRAINT uc_external_resource_approval UNIQUE (external_resource_id, user_id)
 );

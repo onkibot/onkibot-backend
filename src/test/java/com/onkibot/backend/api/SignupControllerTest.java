@@ -1,6 +1,7 @@
 package com.onkibot.backend.api;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -10,7 +11,7 @@ import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.UserRepository;
 import com.onkibot.backend.models.SignupInfoModel;
-import com.onkibot.backend.models.UserModel;
+import com.onkibot.backend.models.UserDetailModel;
 import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,7 +67,7 @@ public class SignupControllerTest {
 
     // Create the user first
     SignupInfoModel signupInfoModel =
-        new SignupInfoModel("test@onkibot.com", rawPassword, "OnkiBOT Tester", true);
+        new SignupInfoModel("test@onkibot.com", rawPassword, "OnkiBOT Tester", "instructor");
 
     MvcResult signupResult =
         this.mockMvc
@@ -82,12 +83,14 @@ public class SignupControllerTest {
 
     String jsonString = signupResult.getResponse().getContentAsString();
 
-    UserModel responseUserModel = mapper.readValue(jsonString, UserModel.class);
+    UserDetailModel responseUserModel = mapper.readValue(jsonString, UserDetailModel.class);
 
     assertEquals(1, responseUserModel.getUserId());
     assertEquals(signupInfoModel.getEmail(), responseUserModel.getEmail());
     assertEquals(signupInfoModel.getName(), responseUserModel.getName());
     assertEquals(signupInfoModel.getIsInstructor(), responseUserModel.getIsInstructor());
+    assertTrue(responseUserModel.getAttending().isEmpty());
+    assertTrue(responseUserModel.getResources().isEmpty());
   }
 
   @Test
@@ -103,7 +106,7 @@ public class SignupControllerTest {
     // Create the user first
     ObjectMapper mapper = new ObjectMapper();
     SignupInfoModel signupInfoModel =
-        new SignupInfoModel("test@onkibot.com", rawPassword, "OnkiBOT Tester", true);
+        new SignupInfoModel("test@onkibot.com", rawPassword, "OnkiBOT Tester", "instructor");
     this.mockMvc
         .perform(
             post(API_URL)

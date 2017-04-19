@@ -13,8 +13,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.Category;
 import com.onkibot.backend.database.entities.Course;
+import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.CategoryRepository;
 import com.onkibot.backend.database.repositories.CourseRepository;
+import com.onkibot.backend.database.repositories.UserRepository;
 import com.onkibot.backend.models.*;
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -53,6 +57,10 @@ public class CategoryControllerTest {
   @Autowired private CourseRepository courseRepository;
 
   @Autowired private CategoryRepository categoryRepository;
+
+  @Autowired private UserRepository userRepository;
+
+  @Autowired private PasswordEncoder passwordEncoder;
 
   @Before
   public void setup() {
@@ -183,6 +191,10 @@ public class CategoryControllerTest {
 
     assertEquals(responseCategories.size(), 2);
 
+    for (CategoryModel catModel : responseCategories) {
+      System.out.println(catModel.getCategoryId() + " - " + catModel.getCourseId() + " - DERP");
+    }
+
     assertResponseModel(category1, responseCategories.get(0));
     assertResponseModel(category2, responseCategories.get(1));
   }
@@ -259,8 +271,21 @@ public class CategoryControllerTest {
   @Test
   @WithMockUser(authorities = {"USER"})
   public void testDeleteCategoryWithAuthentication() throws Exception {
-    Course course = createRepositoryCourse();
+    User user = createRepositoryUser();
+    MockHttpSession session = getAuthenticatedSession(user);
+    Course course = createRepositoryCourse(user);
     Category category = createRepositoryCategory(course);
+
+    System.out.println("Current categoryID: " + category.getCategoryId());
+    System.out.println("Current courseId: " + category.getCourse().getCourseId());
+
+    for (Category innerCategory : categoryRepository.findAll()) {
+      System.out.println(
+          "CategoryID:"
+              + innerCategory.getCategoryId()
+              + " - "
+              + innerCategory.getCourse().getCourseId());
+    }
 
     this.mockMvc
         .perform(
@@ -272,6 +297,7 @@ public class CategoryControllerTest {
                         + API_PATH
                         + "/"
                         + category.getCategoryId())
+                .session(session)
                 .accept(MediaType.ALL))
         .andExpect(status().isNoContent());
   }
@@ -285,10 +311,41 @@ public class CategoryControllerTest {
   }
 
   private Course createRepositoryCourse() {
+    return createRepositoryCourse(null);
+  }
+
+  private Course createRepositoryCourse(User user) {
     // Setup course
     Course course = new Course(UUID.randomUUID().toString(), UUID.randomUUID().toString());
     courseRepository.save(course);
+    if (user != null) {
+      user.getAttending().add(course);
+      userRepository.save(user);
+      course.getAttendees().add(user);
+    }
     return course;
+  }
+
+  private User createRepositoryUser() {
+    String encodedPassword = passwordEncoder.encode("testPassword123");
+    return userRepository.save(
+        new User("test@onkibot.com", encodedPassword, "OnkiBOT Tester", true));
+  }
+
+  private MockHttpSession getAuthenticatedSession() {
+    return getAuthenticatedSession(null);
+  }
+
+  private MockHttpSession getAuthenticatedSession(User user) {
+    if (user == null) {
+      user = createRepositoryUser();
+    }
+
+    MockHttpSession mockHttpSession =
+        new MockHttpSession(
+            webApplicationContext.getServletContext(), UUID.randomUUID().toString());
+    OnkibotBackendApplication.setSessionUser(user, mockHttpSession);
+    return mockHttpSession;
   }
 
   private void assertResponseModel(Category category, CategoryModel responseModel) {
