@@ -14,15 +14,19 @@ public class ResourceFeedback {
   @Column(nullable = false)
   private String comment;
 
+  @Column(nullable = false, length = 1)
+  private int difficulty;
+
   @ManyToOne
   @JoinColumn(name = "feedback_user_id")
   private User feedbackUser;
 
   protected ResourceFeedback() {}
 
-  public ResourceFeedback(Resource resource, String comment, User feedbackUser) {
+  public ResourceFeedback(Resource resource, String comment, int difficulty, User feedbackUser) {
     this.resource = resource;
     this.comment = comment;
+    this.difficulty = difficulty;
     this.feedbackUser = feedbackUser;
   }
 
@@ -36,6 +40,10 @@ public class ResourceFeedback {
 
   public String getComment() {
     return comment;
+  }
+
+  public int getDifficulty() {
+    return difficulty;
   }
 
   public User getFeedbackUser() {

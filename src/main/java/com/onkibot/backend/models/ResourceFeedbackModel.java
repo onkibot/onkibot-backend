@@ -6,6 +6,7 @@ public class ResourceFeedbackModel {
   private int resourceFeedbackId;
   private int resourceId;
   private String comment;
+  private int difficulty;
 
   protected ResourceFeedbackModel() {}
 
@@ -13,6 +14,7 @@ public class ResourceFeedbackModel {
     this.resourceFeedbackId = resourceFeedback.getResourceFeedbackId();
     this.resourceId = resourceFeedback.getResource().getResourceId();
     this.comment = resourceFeedback.getComment();
+    this.difficulty = resourceFeedback.getDifficulty();
   }
 
   public int getResourceFeedbackId() {
@@ -25,5 +27,9 @@ public class ResourceFeedbackModel {
 
   public String getComment() {
     return comment;
+  }
+
+  public int getDifficulty() {
+    return difficulty;
   }
 }

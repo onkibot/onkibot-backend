@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS resource_feedback(
         resource_feedback_id            INT             PRIMARY KEY AUTO_INCREMENT,
         resource_id                     INT             NOT NULL,
         comment                         TEXT            NOT NULL,
+        difficulty                      INT(1)          NOT NULL,
         feedback_user_id                INT             NOT NULL,
         FOREIGN KEY (resource_id)
                 REFERENCES resource(resource_id)

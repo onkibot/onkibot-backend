@@ -63,7 +63,11 @@ public class ResourceFeedbackController {
     Resource resource = this.assertCourseCategoryResource(courseId, categoryId, resourceId);
     ResourceFeedback newResourceFeedback =
         resourceFeedbackRepository.save(
-            new ResourceFeedback(resource, resourceFeedbackInput.getComment(), user));
+            new ResourceFeedback(
+                resource,
+                resourceFeedbackInput.getComment(),
+                resourceFeedbackInput.getDifficulty(),
+                user));
     return new ResponseEntity<>(new ResourceFeedbackModel(newResourceFeedback), HttpStatus.CREATED);
   }
 
