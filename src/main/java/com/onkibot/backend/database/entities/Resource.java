@@ -22,11 +22,11 @@ public class Resource {
   @JoinColumn(name = "publisher_user_id")
   private User publisherUser;
 
-  @ManyToMany(mappedBy = "resource")
+  @ManyToMany(mappedBy = "resource", cascade = CascadeType.REMOVE)
   @OrderBy("external_resource_id")
   private Set<ExternalResource> externalResources;
 
-  @ManyToMany(mappedBy = "resource")
+  @ManyToMany(mappedBy = "resource", cascade = CascadeType.REMOVE)
   @OrderBy("resource_feedback_id")
   private Set<ResourceFeedback> feedback;
 

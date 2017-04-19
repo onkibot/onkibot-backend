@@ -70,6 +70,22 @@ public class ResourceController {
     return new ResponseEntity<>(new ResourceModel(newResource), HttpStatus.CREATED);
   }
 
+  @RequestMapping(method = RequestMethod.DELETE, value = "/{resourceId}")
+  public ResponseEntity<Void> delete(
+      @PathVariable int courseId,
+      @PathVariable int categoryId,
+      @PathVariable int resourceId,
+      HttpSession session) {
+    User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
+    Resource resource = this.assertCourseCategoryResource(courseId, categoryId, resourceId);
+    if (!user.getIsInstructor()
+        || !resource.getPublisherUser().getUserId().equals(user.getUserId())) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+    resourceRepository.delete(resource);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
   private Course assertCourse(int courseId) {
     return this.courseRepository
         .findByCourseId(courseId)
