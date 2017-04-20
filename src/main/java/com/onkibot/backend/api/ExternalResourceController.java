@@ -76,7 +76,12 @@ public class ExternalResourceController {
     Resource resource = this.assertCourseCategoryResource(courseId, categoryId, resourceId);
     ExternalResource newExternalResource =
         externalResourceRepository.save(
-            new ExternalResource(resource, externalResourceInput.getUrl(), user));
+            new ExternalResource(
+                resource,
+                externalResourceInput.getTitle(),
+                externalResourceInput.getComment(),
+                externalResourceInput.getUrl(),
+                user));
     return new ResponseEntity<>(
         new ExternalResourceModel(newExternalResource, false), HttpStatus.CREATED);
   }

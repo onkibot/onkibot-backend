@@ -397,7 +397,7 @@ public class ExternalResourceControllerTest {
     Resource resource = createRepositoryResource(category, publisherUser);
 
     ExternalResourceInputModel externalResourceInputModel =
-        new ExternalResourceInputModel("https://google.com");
+        new ExternalResourceInputModel("Helpful resource", "Great comment", "https://google.com");
 
     this.mockMvc
         .perform(
@@ -434,7 +434,7 @@ public class ExternalResourceControllerTest {
     Resource resource = createRepositoryResource(category, publisherUser);
 
     ExternalResourceInputModel externalResourceInputModel =
-        new ExternalResourceInputModel("https://google.com");
+        new ExternalResourceInputModel("Helpful resource", "Great comment", "https://google.com");
 
     MockHttpSession mockHttpSession =
         new MockHttpSession(
@@ -476,7 +476,12 @@ public class ExternalResourceControllerTest {
   private ExternalResource createRepositoryExternalResource(Resource resource, User publisherUser) {
     // Setup external resource
     ExternalResource externalResource =
-        new ExternalResource(resource, UUID.randomUUID().toString(), publisherUser);
+        new ExternalResource(
+            resource,
+            UUID.randomUUID().toString(),
+            UUID.randomUUID().toString(),
+            UUID.randomUUID().toString(),
+            publisherUser);
     externalResourceRepository.save(externalResource);
     return externalResource;
   }
