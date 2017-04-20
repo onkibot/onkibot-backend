@@ -8,6 +8,7 @@ public class UserDetailModel extends UserModel {
   private String email;
   private List<CourseModel> attending;
   private List<ResourceModel> resources;
+  private List<ExternalResourceModel> externalResources;
 
   protected UserDetailModel() {}
 
@@ -18,6 +19,14 @@ public class UserDetailModel extends UserModel {
         user.getAttending().stream().map(CourseModel::new).collect(Collectors.toList());
     this.resources =
         user.getResources().stream().map(ResourceModel::new).collect(Collectors.toList());
+    this.externalResources =
+        user.getExternalResources()
+            .stream()
+            .map(
+                externalResource ->
+                    new ExternalResourceModel(
+                        externalResource, user.hasApprovedExternalResource(externalResource)))
+            .collect(Collectors.toList());
   }
 
   public String getEmail() {
@@ -30,5 +39,9 @@ public class UserDetailModel extends UserModel {
 
   public List<ResourceModel> getResources() {
     return resources;
+  }
+
+  public List<ExternalResourceModel> getExternalResources() {
+    return externalResources;
   }
 }

@@ -79,6 +79,8 @@ public class SessionControllerTest {
     assertEquals(user.getIsInstructor(), responseUserModel.getIsInstructor());
     assertEquals(user.getAttending().size(), responseUserModel.getAttending().size());
     assertEquals(user.getResources().size(), responseUserModel.getResources().size());
+    assertEquals(
+        user.getExternalResources().size(), responseUserModel.getExternalResources().size());
 
     // Get the current session
     MvcResult sessionResult =
