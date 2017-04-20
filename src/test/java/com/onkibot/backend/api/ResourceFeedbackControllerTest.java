@@ -17,6 +17,7 @@ import com.onkibot.backend.models.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -393,7 +394,7 @@ public class ResourceFeedbackControllerTest {
     Resource resource = createRepositoryResource(category, feedbackUser);
 
     ResourceFeedbackInputModel resourceFeedbackInputModel =
-        new ResourceFeedbackInputModel("Nice resource!");
+        new ResourceFeedbackInputModel("Nice resource!", 2);
 
     this.mockMvc
         .perform(
@@ -430,7 +431,7 @@ public class ResourceFeedbackControllerTest {
     Resource resource = createRepositoryResource(category, feedbackUser);
 
     ResourceFeedbackInputModel resourceFeedbackInputModel =
-        new ResourceFeedbackInputModel("Nice resource!");
+        new ResourceFeedbackInputModel("Nice resource!", 2);
 
     MockHttpSession mockHttpSession =
         new MockHttpSession(
@@ -583,7 +584,11 @@ public class ResourceFeedbackControllerTest {
   private ResourceFeedback createRepositoryResourceFeedback(Resource resource, User feedbackUser) {
     // Setup resource feedback
     ResourceFeedback resourceFeedback =
-        new ResourceFeedback(resource, UUID.randomUUID().toString(), feedbackUser);
+        new ResourceFeedback(
+            resource,
+            UUID.randomUUID().toString(),
+            ThreadLocalRandom.current().nextInt(1, 6),
+            feedbackUser);
     resourceFeedbackRepository.save(resourceFeedback);
     return resourceFeedback;
   }
