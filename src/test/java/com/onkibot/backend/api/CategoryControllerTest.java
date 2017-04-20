@@ -191,10 +191,6 @@ public class CategoryControllerTest {
 
     assertEquals(responseCategories.size(), 2);
 
-    for (CategoryModel catModel : responseCategories) {
-      System.out.println(catModel.getCategoryId() + " - " + catModel.getCourseId() + " - DERP");
-    }
-
     assertResponseModel(category1, responseCategories.get(0));
     assertResponseModel(category2, responseCategories.get(1));
   }
@@ -275,18 +271,6 @@ public class CategoryControllerTest {
     MockHttpSession session = getAuthenticatedSession(user);
     Course course = createRepositoryCourse(user);
     Category category = createRepositoryCategory(course);
-
-    System.out.println("Current categoryID: " + category.getCategoryId());
-    System.out.println("Current courseId: " + category.getCourse().getCourseId());
-
-    for (Category innerCategory : categoryRepository.findAll()) {
-      System.out.println(
-          "CategoryID:"
-              + innerCategory.getCategoryId()
-              + " - "
-              + innerCategory.getCourse().getCourseId());
-    }
-
     this.mockMvc
         .perform(
             delete(

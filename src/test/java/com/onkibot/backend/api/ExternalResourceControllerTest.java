@@ -527,6 +527,8 @@ public class ExternalResourceControllerTest {
     assertEquals(
         (int) externalResource.getPublisherUser().getUserId(),
         responseModel.getPublisherUser().getUserId());
+    assertEquals(externalResource.getTitle(), responseModel.getTitle());
+    assertEquals(externalResource.getComment(), responseModel.getComment());
     assertEquals(externalResource.getUrl(), responseModel.getUrl());
   }
 
@@ -545,6 +547,9 @@ public class ExternalResourceControllerTest {
     assertEquals(
         (int) publisherUser.getUserId(),
         responseExternalResourceModel.getPublisherUser().getUserId());
+    assertEquals(externalResourceInputModel.getTitle(), responseExternalResourceModel.getTitle());
+    assertEquals(
+        externalResourceInputModel.getComment(), responseExternalResourceModel.getComment());
     assertEquals(externalResourceInputModel.getUrl(), responseExternalResourceModel.getUrl());
   }
 

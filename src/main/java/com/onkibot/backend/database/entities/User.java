@@ -37,6 +37,10 @@ public class User implements Serializable {
   @OrderBy("resource_id")
   private Set<Resource> resources;
 
+  @OneToMany(mappedBy = "publisherUser")
+  @OrderBy("resource_id")
+  private Set<ExternalResource> externalResources;
+
   @OneToMany(mappedBy = "externalResourceApprovalId.approvalUser", fetch = FetchType.LAZY)
   @OrderBy("external_resource_id")
   private Set<ExternalResourceApproval> externalResourceApprovals;
@@ -51,6 +55,7 @@ public class User implements Serializable {
     this.isInstructor = isInstructor;
     this.attending = new LinkedHashSet<>();
     this.resources = new LinkedHashSet<>();
+    this.externalResources = new LinkedHashSet<>();
     this.externalResourceApprovals = new LinkedHashSet<>();
   }
 
@@ -88,6 +93,10 @@ public class User implements Serializable {
 
   public Set<Resource> getResources() {
     return resources;
+  }
+
+  public Set<ExternalResource> getExternalResources() {
+    return externalResources;
   }
 
   public Set<ExternalResourceApproval> getExternalResourceApprovals() {
