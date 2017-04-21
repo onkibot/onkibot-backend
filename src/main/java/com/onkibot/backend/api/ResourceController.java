@@ -4,6 +4,7 @@ import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.*;
 import com.onkibot.backend.database.repositories.CategoryRepository;
 import com.onkibot.backend.database.repositories.CourseRepository;
+import com.onkibot.backend.database.repositories.ExternalResourceRepository;
 import com.onkibot.backend.database.repositories.ResourceRepository;
 import com.onkibot.backend.database.repositories.UserRepository;
 import com.onkibot.backend.exceptions.CategoryNotFoundException;
@@ -11,6 +12,7 @@ import com.onkibot.backend.exceptions.CourseNotFoundException;
 import com.onkibot.backend.exceptions.ResourceNotFoundException;
 import com.onkibot.backend.models.*;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
         + "/courses/{courseId}/categories/{categoryId}/resources")
 public class ResourceController {
   @Autowired private ResourceRepository resourceRepository;
+
+  @Autowired private ExternalResourceRepository externalResourceRepository;
 
   @Autowired private CategoryRepository categoryRepository;
 
@@ -47,13 +51,10 @@ public class ResourceController {
     User sessionUser = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     Category category = this.assertCourseCategory(courseId, categoryId);
     Set<Resource> resources = category.getResources();
-    Set<ResourceModel> resourceModels = new LinkedHashSet<>();
-
-    for (Resource resource : resources) {
-      resourceModels.add(new ResourceModel(resource, sessionUser));
-    }
-
-    return resourceModels;
+    return resources
+        .stream()
+        .map(resource -> new ResourceModel(resource, sessionUser))
+        .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
   @RequestMapping(method = RequestMethod.POST)
@@ -65,9 +66,28 @@ public class ResourceController {
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     Category category = this.assertCourseCategory(courseId, categoryId);
     Resource newResource =
-        resourceRepository.save(
-            new Resource(category, resourceInput.getName(), resourceInput.getBody(), user));
-    return new ResponseEntity<>(new ResourceModel(newResource), HttpStatus.CREATED);
+        new Resource(category, resourceInput.getName(), resourceInput.getBody(), user);
+    Iterable<ExternalResource> newExternalResources =
+        resourceInput
+            .getExternalResources()
+            .stream()
+            .map(
+                externalResourceInput ->
+                    new ExternalResource(
+                        newResource,
+                        externalResourceInput.getTitle(),
+                        externalResourceInput.getComment(),
+                        externalResourceInput.getUrl(),
+                        user))
+            .collect(Collectors.toList());
+
+    Resource savedResource = resourceRepository.save(newResource);
+    Iterable<ExternalResource> savedExternalResources =
+        externalResourceRepository.save(newExternalResources);
+    savedExternalResources.forEach(
+        newExternalResource -> savedResource.getExternalResources().add(newExternalResource));
+
+    return new ResponseEntity<>(new ResourceModel(savedResource), HttpStatus.CREATED);
   }
 
   @RequestMapping(method = RequestMethod.DELETE, value = "/{resourceId}")
