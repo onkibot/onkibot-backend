@@ -39,12 +39,18 @@ public class CategoryController {
   Collection<CategoryModel> getAll(@PathVariable int courseId, HttpSession session) {
     Course course = this.assertCourse(courseId);
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
-    return course.getCategories().stream().map(category -> new CategoryModel(category, user)).collect(Collectors.toList());
+    return course
+        .getCategories()
+        .stream()
+        .map(category -> new CategoryModel(category, user))
+        .collect(Collectors.toList());
   }
 
   @RequestMapping(method = RequestMethod.POST)
   ResponseEntity<CategoryModel> post(
-      @PathVariable int courseId, @RequestBody CategoryInputModel categoryInput, HttpSession session) {
+      @PathVariable int courseId,
+      @RequestBody CategoryInputModel categoryInput,
+      HttpSession session) {
     Course course = this.assertCourse(courseId);
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     Category newCategory =

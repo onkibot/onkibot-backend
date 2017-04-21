@@ -71,6 +71,9 @@ public class ExternalResource implements Serializable {
   }
 
   public boolean hasUserApproved(User user) {
-    return getUserApprovals() != null && getUserApprovals().stream().anyMatch(approval -> approval.getApprovalUser().getUserId().equals(user.getUserId()));
+    return getUserApprovals() != null
+        && getUserApprovals()
+            .stream()
+            .anyMatch(approval -> approval.getApprovalUser().getUserId().equals(user.getUserId()));
   }
 }

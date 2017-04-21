@@ -20,7 +20,11 @@ public class CategoryModel {
     this.name = category.getName();
     this.description = category.getDescription();
     this.resources =
-        category.getResources().stream().map(resource -> new ResourceModel(resource, forUser)).collect(Collectors.toList());
+        category
+            .getResources()
+            .stream()
+            .map(resource -> new ResourceModel(resource, forUser))
+            .collect(Collectors.toList());
   }
 
   public int getCategoryId() {

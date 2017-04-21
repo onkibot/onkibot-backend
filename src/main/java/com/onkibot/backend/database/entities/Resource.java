@@ -70,6 +70,9 @@ public class Resource {
   }
 
   public Optional<ResourceFeedback> getFeedbackForUser(User user) {
-    return getFeedback().stream().filter(feedback -> feedback.getFeedbackUser().getUserId().equals(user.getUserId())).findFirst();
+    return getFeedback()
+        .stream()
+        .filter(feedback -> feedback.getFeedbackUser().getUserId().equals(user.getUserId()))
+        .findFirst();
   }
 }

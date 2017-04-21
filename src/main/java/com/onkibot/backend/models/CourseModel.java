@@ -19,7 +19,11 @@ public class CourseModel {
     this.name = course.getName();
     this.description = course.getDescription();
     this.categories =
-        course.getCategories().stream().map(category -> new CategoryModel(category, forUser)).collect(Collectors.toList());
+        course
+            .getCategories()
+            .stream()
+            .map(category -> new CategoryModel(category, forUser))
+            .collect(Collectors.toList());
     this.attendees =
         course.getAttendees().stream().map(UserModel::new).collect(Collectors.toList());
   }

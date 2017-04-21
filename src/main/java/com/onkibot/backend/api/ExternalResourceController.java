@@ -2,7 +2,6 @@ package com.onkibot.backend.api;
 
 import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.*;
-import com.onkibot.backend.database.ids.ExternalResourceApprovalId;
 import com.onkibot.backend.database.repositories.*;
 import com.onkibot.backend.exceptions.*;
 import com.onkibot.backend.models.*;

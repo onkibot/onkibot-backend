@@ -26,13 +26,10 @@ public class ResourceModel {
         resource
             .getExternalResources()
             .stream()
-            .map(
-                externalResource ->
-                    new ExternalResourceModel(
-                        externalResource,
-                        forUser))
+            .map(externalResource -> new ExternalResourceModel(externalResource, forUser))
             .collect(Collectors.toList());
-    this.myFeedback = resource.getFeedbackForUser(forUser).map(ResourceFeedbackModel::new).orElse(null);
+    this.myFeedback =
+        resource.getFeedbackForUser(forUser).map(ResourceFeedbackModel::new).orElse(null);
   }
 
   public int getResourceId() {
