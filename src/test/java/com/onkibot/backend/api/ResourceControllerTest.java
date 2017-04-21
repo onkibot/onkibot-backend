@@ -22,7 +22,9 @@ import com.onkibot.backend.models.*;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -335,8 +337,13 @@ public class ResourceControllerTest {
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
 
+    ExternalResourceInputModel externalResourceInputModel =
+        new ExternalResourceInputModel("Random external resource", "Random comment", "url.com");
     ResourceInputModel resourceInputModel =
-        new ResourceInputModel("Random resource", "Random body", Collections.emptyList());
+        new ResourceInputModel(
+            "Random resource",
+            "Random body",
+            Collections.singletonList(externalResourceInputModel));
 
     this.mockMvc
         .perform(
@@ -367,8 +374,13 @@ public class ResourceControllerTest {
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
 
+    ExternalResourceInputModel externalResourceInputModel =
+        new ExternalResourceInputModel("Random external resource", "Random comment", "url.com");
     ResourceInputModel resourceInputModel =
-        new ResourceInputModel("Random resource", "Random body", Collections.emptyList());
+        new ResourceInputModel(
+            "Random resource",
+            "Random body",
+            Collections.singletonList(externalResourceInputModel));
 
     MockHttpSession mockHttpSession =
         new MockHttpSession(
@@ -462,6 +474,31 @@ public class ResourceControllerTest {
         (int) publisherUser.getUserId(), responseResourceModel.getPublisherUser().getUserId());
     assertEquals(resourceInputModel.getName(), responseResourceModel.getName());
     assertEquals(resourceInputModel.getBody(), responseResourceModel.getBody());
+    assertEquals(
+        resourceInputModel.getExternalResources().size(),
+        responseResourceModel.getExternalResources().size());
+
+    Map<String, ExternalResourceModel> responseExternalResourceModels =
+        responseResourceModel
+            .getExternalResources()
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    ExternalResourceModel::getUrl, externalResourceModel -> externalResourceModel));
+
+    resourceInputModel
+        .getExternalResources()
+        .forEach(
+            externalResourceInputModel -> {
+              ExternalResourceModel responseExternalResourceModel =
+                  responseExternalResourceModels.get(externalResourceInputModel.getUrl());
+              assertNotNull(responseExternalResourceModel);
+              assertEquals(
+                  externalResourceInputModel.getTitle(), responseExternalResourceModel.getTitle());
+              assertEquals(
+                  externalResourceInputModel.getComment(),
+                  responseExternalResourceModel.getComment());
+            });
   }
 
   private MockHttpSession getAuthenticatedSession(User user) {
