@@ -12,24 +12,11 @@ public class ResourceModel {
   private String body;
   private UserModel publisherUser;
   private List<ExternalResourceModel> externalResources;
+  private ResourceFeedbackModel myFeedback;
 
   protected ResourceModel() {}
 
-  public ResourceModel(Resource resource) {
-    this.resourceId = resource.getResourceId();
-    this.categoryId = resource.getCategory().getCategoryId();
-    this.name = resource.getName();
-    this.body = resource.getBody();
-    this.publisherUser = new UserModel(resource.getPublisherUser());
-    this.externalResources =
-        resource
-            .getExternalResources()
-            .stream()
-            .map(externalResource -> new ExternalResourceModel(externalResource, false))
-            .collect(Collectors.toList());
-  }
-
-  public ResourceModel(Resource resource, User sessionUser) {
+  public ResourceModel(Resource resource, User forUser) {
     this.resourceId = resource.getResourceId();
     this.categoryId = resource.getCategory().getCategoryId();
     this.name = resource.getName();
@@ -43,8 +30,9 @@ public class ResourceModel {
                 externalResource ->
                     new ExternalResourceModel(
                         externalResource,
-                        sessionUser.hasApprovedExternalResource(externalResource)))
+                        forUser))
             .collect(Collectors.toList());
+    this.myFeedback = resource.getFeedbackForUser(forUser).map(ResourceFeedbackModel::new).orElse(null);
   }
 
   public int getResourceId() {
@@ -69,5 +57,9 @@ public class ResourceModel {
 
   public List<ExternalResourceModel> getExternalResources() {
     return externalResources;
+  }
+
+  public ResourceFeedbackModel getMyFeedback() {
+    return myFeedback;
   }
 }

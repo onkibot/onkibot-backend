@@ -41,8 +41,8 @@ public class ExternalResourceController {
     ExternalResource externalResource =
         this.assertCourseCategoryExternalResource(
             courseId, categoryId, resourceId, externalResourceId);
-    return new ExternalResourceModel(
-        externalResource, hasApprovedExternalResource(externalResource, session));
+    User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
+    return new ExternalResourceModel(externalResource, user);
   }
 
   @RequestMapping(method = RequestMethod.GET)
@@ -52,13 +52,11 @@ public class ExternalResourceController {
       @PathVariable int resourceId,
       HttpSession session) {
     Resource resource = this.assertCourseCategoryResource(courseId, categoryId, resourceId);
+    User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     return resource
         .getExternalResources()
         .stream()
-        .map(
-            externalResource ->
-                new ExternalResourceModel(
-                    externalResource, hasApprovedExternalResource(externalResource, session)))
+        .map(externalResource -> new ExternalResourceModel(externalResource, user))
         .collect(Collectors.toList());
   }
 
@@ -70,10 +68,8 @@ public class ExternalResourceController {
       @RequestBody ExternalResourceInputModel externalResourceInput,
       HttpSession session) {
 
-    int userId = (int) session.getAttribute("userId");
-    User user =
-        userRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException(userId));
     Resource resource = this.assertCourseCategoryResource(courseId, categoryId, resourceId);
+    User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     ExternalResource newExternalResource =
         externalResourceRepository.save(
             new ExternalResource(
@@ -83,7 +79,7 @@ public class ExternalResourceController {
                 externalResourceInput.getUrl(),
                 user));
     return new ResponseEntity<>(
-        new ExternalResourceModel(newExternalResource, false), HttpStatus.CREATED);
+        new ExternalResourceModel(newExternalResource, user), HttpStatus.CREATED);
   }
 
   @RequestMapping(method = RequestMethod.DELETE, value = "/{externalResourceId}")
@@ -146,15 +142,5 @@ public class ExternalResourceController {
       throw new ExternalResourceNotFoundException(categoryId);
     }
     return externalResource;
-  }
-
-  private boolean hasApprovedExternalResource(
-      ExternalResource externalResource, HttpSession session) {
-    User sessionUser = OnkibotBackendApplication.assertSessionUser(userRepository, session);
-    ExternalResourceApprovalId externalResourceApprovalId =
-        new ExternalResourceApprovalId(externalResource, sessionUser);
-    return externalResourceApprovalRepository
-        .findByExternalResourceApprovalId(externalResourceApprovalId)
-        .isPresent();
   }
 }

@@ -1,6 +1,7 @@
 package com.onkibot.backend.models;
 
 import com.onkibot.backend.database.entities.ExternalResource;
+import com.onkibot.backend.database.entities.User;
 
 public class ExternalResourceModel {
   private int externalResourceId;
@@ -9,18 +10,18 @@ public class ExternalResourceModel {
   private String comment;
   private String url;
   private UserModel publisherUser;
-  private boolean hasApproved;
+  private boolean myApproval;
 
   protected ExternalResourceModel() {}
 
-  public ExternalResourceModel(ExternalResource externalResource, boolean hasApproved) {
+  public ExternalResourceModel(ExternalResource externalResource, User forUser) {
     this.externalResourceId = externalResource.getExternalResourceId();
     this.resourceId = externalResource.getResource().getResourceId();
     this.title = externalResource.getTitle();
     this.comment = externalResource.getComment();
     this.url = externalResource.getUrl();
     this.publisherUser = new UserModel(externalResource.getPublisherUser());
-    this.hasApproved = hasApproved;
+    this.myApproval = externalResource.hasUserApproved(forUser);
   }
 
   public int getExternalResourceId() {
@@ -47,7 +48,7 @@ public class ExternalResourceModel {
     return publisherUser;
   }
 
-  public boolean getHasApproved() {
-    return hasApproved;
+  public boolean getMyApproval() {
+    return myApproval;
   }
 }

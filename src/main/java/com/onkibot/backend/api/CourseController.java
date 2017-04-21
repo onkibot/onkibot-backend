@@ -23,15 +23,17 @@ public class CourseController {
   @Autowired private UserRepository userRepository;
 
   @RequestMapping(method = RequestMethod.GET, value = "/{courseId}")
-  public CourseModel get(@PathVariable int courseId) {
+  public CourseModel get(@PathVariable int courseId, HttpSession session) {
     Course course = assertCourse(courseId);
-    return new CourseModel(course);
+    User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
+    return new CourseModel(course, user);
   }
 
   @RequestMapping(method = RequestMethod.GET)
-  public List<CourseModel> getAll() {
+  public List<CourseModel> getAll(HttpSession session) {
     ArrayList<CourseModel> models = new ArrayList<>();
-    courseRepository.findAll().forEach(course -> models.add(new CourseModel(course)));
+    User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
+    courseRepository.findAll().forEach(course -> models.add(new CourseModel(course, user)));
     return models;
   }
 
@@ -44,7 +46,7 @@ public class CourseController {
     user.getAttending().add(course);
     course.getAttendees().add(user);
     userRepository.save(user);
-    return new ResponseEntity<>(new CourseModel(course), HttpStatus.CREATED);
+    return new ResponseEntity<>(new CourseModel(course, user), HttpStatus.CREATED);
   }
 
   @RequestMapping(method = RequestMethod.DELETE, value = "/{courseId}")

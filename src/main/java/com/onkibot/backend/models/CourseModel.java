@@ -1,6 +1,7 @@
 package com.onkibot.backend.models;
 
 import com.onkibot.backend.database.entities.Course;
+import com.onkibot.backend.database.entities.User;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,12 +14,12 @@ public class CourseModel {
 
   protected CourseModel() {}
 
-  public CourseModel(Course course) {
+  public CourseModel(Course course, User forUser) {
     this.courseId = course.getCourseId();
     this.name = course.getName();
     this.description = course.getDescription();
     this.categories =
-        course.getCategories().stream().map(CategoryModel::new).collect(Collectors.toList());
+        course.getCategories().stream().map(category -> new CategoryModel(category, forUser)).collect(Collectors.toList());
     this.attendees =
         course.getAttendees().stream().map(UserModel::new).collect(Collectors.toList());
   }

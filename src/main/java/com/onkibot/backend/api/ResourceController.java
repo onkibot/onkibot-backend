@@ -48,12 +48,12 @@ public class ResourceController {
   @RequestMapping(method = RequestMethod.GET)
   Collection<ResourceModel> getAll(
       @PathVariable int courseId, @PathVariable int categoryId, HttpSession session) {
-    User sessionUser = OnkibotBackendApplication.assertSessionUser(userRepository, session);
+    User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     Category category = this.assertCourseCategory(courseId, categoryId);
     Set<Resource> resources = category.getResources();
     return resources
         .stream()
-        .map(resource -> new ResourceModel(resource, sessionUser))
+        .map(resource -> new ResourceModel(resource, user))
         .collect(Collectors.toCollection(LinkedHashSet::new));
   }
 
@@ -87,7 +87,7 @@ public class ResourceController {
     savedExternalResources.forEach(
         newExternalResource -> savedResource.getExternalResources().add(newExternalResource));
 
-    return new ResponseEntity<>(new ResourceModel(savedResource), HttpStatus.CREATED);
+    return new ResponseEntity<>(new ResourceModel(savedResource, user), HttpStatus.CREATED);
   }
 
   @RequestMapping(method = RequestMethod.DELETE, value = "/{resourceId}")
