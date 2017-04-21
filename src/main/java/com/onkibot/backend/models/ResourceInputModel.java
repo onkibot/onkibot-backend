@@ -9,7 +9,8 @@ public class ResourceInputModel {
 
   protected ResourceInputModel() {}
 
-  public ResourceInputModel(String name, String body, List<ExternalResourceInputModel> externalResources) {
+  public ResourceInputModel(
+      String name, String body, List<ExternalResourceInputModel> externalResources) {
     this.name = name;
     this.body = body;
     this.externalResources = externalResources;

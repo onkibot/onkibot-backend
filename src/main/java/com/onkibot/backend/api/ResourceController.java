@@ -51,7 +51,8 @@ public class ResourceController {
     User sessionUser = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     Category category = this.assertCourseCategory(courseId, categoryId);
     Set<Resource> resources = category.getResources();
-    return resources.stream()
+    return resources
+        .stream()
         .map(resource -> new ResourceModel(resource, sessionUser))
         .collect(Collectors.toCollection(LinkedHashSet::new));
   }
@@ -64,17 +65,27 @@ public class ResourceController {
       HttpSession session) {
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     Category category = this.assertCourseCategory(courseId, categoryId);
-    Resource newResource
-        = new Resource(category, resourceInput.getName(), resourceInput.getBody(), user);
+    Resource newResource =
+        new Resource(category, resourceInput.getName(), resourceInput.getBody(), user);
     Iterable<ExternalResource> newExternalResources =
-        resourceInput.getExternalResources().stream()
-        .map(externalResourceInput -> new ExternalResource(newResource, externalResourceInput.getTitle(), externalResourceInput.getComment(), externalResourceInput.getUrl(), user))
-        .collect(Collectors.toList());
+        resourceInput
+            .getExternalResources()
+            .stream()
+            .map(
+                externalResourceInput ->
+                    new ExternalResource(
+                        newResource,
+                        externalResourceInput.getTitle(),
+                        externalResourceInput.getComment(),
+                        externalResourceInput.getUrl(),
+                        user))
+            .collect(Collectors.toList());
 
     Resource savedResource = resourceRepository.save(newResource);
     Iterable<ExternalResource> savedExternalResources =
         externalResourceRepository.save(newExternalResources);
-    savedExternalResources.forEach(newExternalResource -> savedResource.getExternalResources().add(newExternalResource));
+    savedExternalResources.forEach(
+        newExternalResource -> savedResource.getExternalResources().add(newExternalResource));
 
     return new ResponseEntity<>(new ResourceModel(savedResource), HttpStatus.CREATED);
   }
