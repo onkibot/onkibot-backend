@@ -20,6 +20,7 @@ import com.onkibot.backend.database.repositories.ResourceRepository;
 import com.onkibot.backend.database.repositories.UserRepository;
 import com.onkibot.backend.models.*;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import org.junit.Before;
@@ -335,7 +336,7 @@ public class ResourceControllerTest {
     Category category = createRepositoryCategory(course);
 
     ResourceInputModel resourceInputModel =
-        new ResourceInputModel("Random resource", "Random body");
+        new ResourceInputModel("Random resource", "Random body", Collections.emptyList());
 
     this.mockMvc
         .perform(
@@ -367,7 +368,7 @@ public class ResourceControllerTest {
     Category category = createRepositoryCategory(course);
 
     ResourceInputModel resourceInputModel =
-        new ResourceInputModel("Random resource", "Random body");
+        new ResourceInputModel("Random resource", "Random body", Collections.emptyList());
 
     MockHttpSession mockHttpSession =
         new MockHttpSession(
