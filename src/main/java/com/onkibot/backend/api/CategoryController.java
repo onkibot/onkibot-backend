@@ -29,25 +29,34 @@ public class CategoryController {
   @Autowired private UserRepository userRepository;
 
   @RequestMapping(method = RequestMethod.GET, value = "/{categoryId}")
-  CategoryModel get(@PathVariable int courseId, @PathVariable int categoryId) {
+  CategoryModel get(@PathVariable int courseId, @PathVariable int categoryId, HttpSession session) {
     Category category = this.assertCourseCategory(courseId, categoryId);
-    return new CategoryModel(category);
+    User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
+    return new CategoryModel(category, user);
   }
 
   @RequestMapping(method = RequestMethod.GET)
-  Collection<CategoryModel> getAll(@PathVariable int courseId) {
+  Collection<CategoryModel> getAll(@PathVariable int courseId, HttpSession session) {
     Course course = this.assertCourse(courseId);
-    return course.getCategories().stream().map(CategoryModel::new).collect(Collectors.toList());
+    User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
+    return course
+        .getCategories()
+        .stream()
+        .map(category -> new CategoryModel(category, user))
+        .collect(Collectors.toList());
   }
 
   @RequestMapping(method = RequestMethod.POST)
   ResponseEntity<CategoryModel> post(
-      @PathVariable int courseId, @RequestBody CategoryInputModel categoryInput) {
+      @PathVariable int courseId,
+      @RequestBody CategoryInputModel categoryInput,
+      HttpSession session) {
     Course course = this.assertCourse(courseId);
+    User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     Category newCategory =
         categoryRepository.save(
             new Category(course, categoryInput.getName(), categoryInput.getDescription()));
-    return new ResponseEntity<>(new CategoryModel(newCategory), HttpStatus.CREATED);
+    return new ResponseEntity<>(new CategoryModel(newCategory, user), HttpStatus.CREATED);
   }
 
   @RequestMapping(method = RequestMethod.DELETE, value = "/{categoryId}")

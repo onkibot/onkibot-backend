@@ -1,6 +1,7 @@
 package com.onkibot.backend.database.entities;
 
 import java.io.Serializable;
+import java.util.Set;
 import javax.persistence.*;
 
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"resource_id", "url"}))
@@ -25,6 +26,10 @@ public class ExternalResource implements Serializable {
   @ManyToOne
   @JoinColumn(name = "publisher_user_id")
   private User publisherUser;
+
+  @OneToMany(mappedBy = "externalResourceApprovalId.externalResource", cascade = CascadeType.REMOVE)
+  @OrderBy("external_resource_id")
+  private Set<ExternalResourceApproval> userApprovals;
 
   protected ExternalResource() {}
 
@@ -59,5 +64,16 @@ public class ExternalResource implements Serializable {
 
   public User getPublisherUser() {
     return publisherUser;
+  }
+
+  public Set<ExternalResourceApproval> getUserApprovals() {
+    return userApprovals;
+  }
+
+  public boolean hasUserApproved(User user) {
+    return getUserApprovals() != null
+        && getUserApprovals()
+            .stream()
+            .anyMatch(approval -> approval.getApprovalUser().getUserId().equals(user.getUserId()));
   }
 }

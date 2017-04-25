@@ -133,6 +133,8 @@ public class CategoryControllerTest {
   @Test
   @WithMockUser(authorities = {"USER"})
   public void testGetCategoryWithAuthentication() throws Exception {
+    User publisherUser = createRepositoryUser();
+    MockHttpSession mockHttpSession = getAuthenticatedSession(publisherUser);
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
 
@@ -146,6 +148,7 @@ public class CategoryControllerTest {
                         + API_PATH
                         + "/"
                         + category.getCategoryId())
+                    .session(mockHttpSession)
                     .accept(MediaType.ALL))
             .andExpect(status().isOk())
             .andReturn();
@@ -171,6 +174,8 @@ public class CategoryControllerTest {
   @Test
   @WithMockUser(authorities = {"USER"})
   public void testGetCategoriesWithAuthentication() throws Exception {
+    User publisherUser = createRepositoryUser();
+    MockHttpSession mockHttpSession = getAuthenticatedSession(publisherUser);
     Course course = createRepositoryCourse();
     Category category1 = createRepositoryCategory(course);
     Category category2 = createRepositoryCategory(course);
@@ -179,6 +184,7 @@ public class CategoryControllerTest {
         this.mockMvc
             .perform(
                 get(API_URL_COURSE + "/" + course.getCourseId() + "/" + API_PATH)
+                    .session(mockHttpSession)
                     .accept(MediaType.ALL))
             .andExpect(status().isOk())
             .andReturn();
@@ -218,6 +224,8 @@ public class CategoryControllerTest {
   public void testCreateCategoryWithAuthentication() throws Exception {
     ObjectMapper mapper = new ObjectMapper();
 
+    User publisherUser = createRepositoryUser();
+    MockHttpSession mockHttpSession = getAuthenticatedSession(publisherUser);
     Course course = createRepositoryCourse();
 
     CategoryInputModel categoryInputModel =
@@ -229,6 +237,7 @@ public class CategoryControllerTest {
                 post(API_URL_COURSE + "/" + course.getCourseId() + "/" + API_PATH)
                     .content(mapper.writeValueAsString(categoryInputModel))
                     .contentType(MediaType.APPLICATION_JSON)
+                    .session(mockHttpSession)
                     .accept(MediaType.ALL))
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))

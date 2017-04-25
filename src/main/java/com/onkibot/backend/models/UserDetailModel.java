@@ -16,16 +16,19 @@ public class UserDetailModel extends UserModel {
     super(user);
     this.email = user.getEmail();
     this.attending =
-        user.getAttending().stream().map(CourseModel::new).collect(Collectors.toList());
+        user.getAttending()
+            .stream()
+            .map(course -> new CourseModel(course, user))
+            .collect(Collectors.toList());
     this.resources =
-        user.getResources().stream().map(ResourceModel::new).collect(Collectors.toList());
+        user.getResources()
+            .stream()
+            .map(resource -> new ResourceModel(resource, user))
+            .collect(Collectors.toList());
     this.externalResources =
         user.getExternalResources()
             .stream()
-            .map(
-                externalResource ->
-                    new ExternalResourceModel(
-                        externalResource, user.hasApprovedExternalResource(externalResource)))
+            .map(externalResource -> new ExternalResourceModel(externalResource, user))
             .collect(Collectors.toList());
   }
 
