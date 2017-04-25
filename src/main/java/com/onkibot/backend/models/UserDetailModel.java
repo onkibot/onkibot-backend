@@ -16,20 +16,20 @@ public class UserDetailModel extends UserModel {
     super(user);
     this.email = user.getEmail();
     this.attending =
-            user.getAttending()
-                    .stream()
-                    .map(course -> new CourseModel(course, user))
-                    .collect(Collectors.toList());
+        user.getAttending()
+            .stream()
+            .map(course -> new CourseModel(course, user))
+            .collect(Collectors.toList());
     this.resources =
-            user.getResources()
-                    .stream()
-                    .map(resource -> new ResourceModel(resource, user))
-                    .collect(Collectors.toList());
+        user.getResources()
+            .stream()
+            .map(resource -> new ResourceModel(resource, user))
+            .collect(Collectors.toList());
     this.externalResources =
-            user.getExternalResources()
-                    .stream()
-                    .map(externalResource -> new ExternalResourceModel(externalResource, user))
-                    .collect(Collectors.toList());
+        user.getExternalResources()
+            .stream()
+            .map(externalResource -> new ExternalResourceModel(externalResource, user))
+            .collect(Collectors.toList());
   }
 
   public String getEmail() {
