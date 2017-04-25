@@ -27,7 +27,7 @@ public class ExternalResource implements Serializable {
   @JoinColumn(name = "publisher_user_id")
   private User publisherUser;
 
-  @OneToMany(mappedBy = "externalResourceApprovalId.externalResource", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "externalResourceApprovalId.externalResource", cascade = CascadeType.REMOVE)
   @OrderBy("external_resource_id")
   private Set<ExternalResourceApproval> userApprovals;
 
