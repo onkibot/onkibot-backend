@@ -3,6 +3,12 @@ package com.onkibot.backend.models;
 import com.onkibot.backend.database.entities.User;
 import java.util.Date;
 
+/**
+ * This class is used to serializer a {@link User}.
+ * <p>
+ * If more information is needed (such as email, list of attending Courses, i.e.),
+ * use {@link UserDetailModel}
+ */
 public class UserModel {
   private int userId;
   private String name;
