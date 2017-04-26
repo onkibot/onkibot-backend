@@ -343,6 +343,7 @@ public class ResourceControllerTest {
         new ResourceInputModel(
             "Random resource",
             "Random body",
+            "Random comment",
             Collections.singletonList(externalResourceInputModel));
 
     this.mockMvc
@@ -380,6 +381,7 @@ public class ResourceControllerTest {
         new ResourceInputModel(
             "Random resource",
             "Random body",
+            "Random comment",
             Collections.singletonList(externalResourceInputModel));
 
     MockHttpSession mockHttpSession =
@@ -419,7 +421,11 @@ public class ResourceControllerTest {
     // Setup resource
     Resource resource =
         new Resource(
-            category, UUID.randomUUID().toString(), UUID.randomUUID().toString(), publisherUser);
+            category,
+            UUID.randomUUID().toString(),
+            UUID.randomUUID().toString(),
+            UUID.randomUUID().toString(),
+            publisherUser);
     resourceRepository.save(resource);
     return resource;
   }

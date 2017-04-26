@@ -18,6 +18,8 @@ public class Resource {
   @Column(nullable = false)
   private String body;
 
+  @Lob @Column private String comment;
+
   @ManyToOne
   @JoinColumn(name = "publisher_user_id")
   private User publisherUser;
@@ -32,10 +34,11 @@ public class Resource {
 
   protected Resource() {}
 
-  public Resource(Category category, String name, String body, User publisherUser) {
+  public Resource(Category category, String name, String body, String comment, User publisherUser) {
     this.category = category;
     this.name = name;
     this.body = body;
+    this.comment = comment;
     this.publisherUser = publisherUser;
     this.externalResources = new LinkedHashSet<>();
     this.feedback = new LinkedHashSet<>();
@@ -57,6 +60,10 @@ public class Resource {
     return body;
   }
 
+  public String getComment() {
+    return comment;
+  }
+
   public User getPublisherUser() {
     return publisherUser;
   }
@@ -74,5 +81,11 @@ public class Resource {
         .stream()
         .filter(feedback -> feedback.getFeedbackUser().getUserId().equals(user.getUserId()))
         .findFirst();
+  }
+
+  public int getAverageFeedbackDifficulty() {
+    return (int)
+        Math.round(
+            getFeedback().stream().mapToInt(ResourceFeedback::getDifficulty).average().orElse(0));
   }
 }

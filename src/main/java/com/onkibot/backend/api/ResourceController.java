@@ -66,7 +66,12 @@ public class ResourceController {
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     Category category = this.assertCourseCategory(courseId, categoryId);
     Resource newResource =
-        new Resource(category, resourceInput.getName(), resourceInput.getBody(), user);
+        new Resource(
+            category,
+            resourceInput.getName(),
+            resourceInput.getBody(),
+            resourceInput.getComment(),
+            user);
     Iterable<ExternalResource> newExternalResources =
         resourceInput
             .getExternalResources()

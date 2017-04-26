@@ -10,6 +10,7 @@ public class ExternalResourceModel {
   private String comment;
   private String url;
   private UserModel publisherUser;
+  private int approvalCount;
   private boolean myApproval;
 
   protected ExternalResourceModel() {}
@@ -21,6 +22,7 @@ public class ExternalResourceModel {
     this.comment = externalResource.getComment();
     this.url = externalResource.getUrl();
     this.publisherUser = new UserModel(externalResource.getPublisherUser());
+    this.approvalCount = externalResource.getUserApprovalsCount();
     this.myApproval = externalResource.hasUserApproved(forUser);
   }
 
@@ -46,6 +48,10 @@ public class ExternalResourceModel {
 
   public UserModel getPublisherUser() {
     return publisherUser;
+  }
+
+  public int getApprovalCount() {
+    return approvalCount;
   }
 
   public boolean getMyApproval() {

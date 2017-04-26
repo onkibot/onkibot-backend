@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS resource(
         category_id                     INT                     NOT NULL,
         name                            VARCHAR(50)             NOT NULL,
         body                            TEXT                    NOT NULL,
+        comment                         TEXT                    NOT NULL,
         publisher_user_id               INT                     NOT NULL,
         FOREIGN KEY (category_id)
                 REFERENCES category(category_id)
