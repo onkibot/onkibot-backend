@@ -172,14 +172,13 @@ public class ExternalResourceController {
                 user));
 
     // Create a ExternalResourceApprovalId for the new ExternalResource grouped with the User.
-    ExternalResourceApprovalId externalResourceApprovalId = new ExternalResourceApprovalId(
-            newExternalResource, user
-    );
+    ExternalResourceApprovalId externalResourceApprovalId =
+        new ExternalResourceApprovalId(newExternalResource, user);
 
     // Create the ExternalResourceApproval by using the ExternalResourceApprovalId.
-    ExternalResourceApproval externalResourceApproval = externalResourceApprovalRepository.save(
-          new ExternalResourceApproval(externalResourceApprovalId)
-    );
+    ExternalResourceApproval externalResourceApproval =
+        externalResourceApprovalRepository.save(
+            new ExternalResourceApproval(externalResourceApprovalId));
 
     // Add the new ExternalResourceApproval to the new ExternalResource.
     newExternalResource.getUserApprovals().add(externalResourceApproval);

@@ -146,9 +146,8 @@ public class ResourceFeedbackController {
             this.resourceRepository, resourceId);
 
     // Check if there is an existing ResourceFeedback with the input parameters in the database.
-    ResourceFeedback existingResourceFeedback = resourceFeedbackRepository.findByResourceAndFeedbackUser(
-      resource, user
-    );
+    ResourceFeedback existingResourceFeedback =
+        resourceFeedbackRepository.findByResourceAndFeedbackUser(resource, user);
 
     // If the existingResourceFeedback is not null, it exists, throw a Conflict (409).
     if (existingResourceFeedback != null) {
