@@ -111,7 +111,7 @@ public class SessionControllerTest {
     MvcResult sessionResult =
         this.mockMvc
             .perform(get(API_URL).session(this.mockHttpSession).accept(MediaType.ALL))
-            .andExpect(status().isOk())
+            .andExpect(status().isNotFound())
             .andReturn();
 
     String jsonString = sessionResult.getResponse().getContentAsString();
