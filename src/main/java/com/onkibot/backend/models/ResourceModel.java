@@ -16,6 +16,7 @@ public class ResourceModel {
   private List<ExternalResourceModel> externalResources;
   private ResourceFeedbackModel myFeedback;
   private List<ResourceFeedbackModel> feedback;
+  private int averageFeedbackDifficulty;
 
   protected ResourceModel() {}
 
@@ -44,6 +45,7 @@ public class ResourceModel {
     } else {
       this.feedback = new ArrayList<>();
     }
+    this.averageFeedbackDifficulty = resource.getAverageFeedbackDifficulty();
   }
 
   public int getResourceId() {
@@ -80,5 +82,9 @@ public class ResourceModel {
 
   public List<ResourceFeedbackModel> getFeedback() {
     return feedback;
+  }
+
+  public int getAverageFeedbackDifficulty() {
+    return averageFeedbackDifficulty;
   }
 }

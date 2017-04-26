@@ -59,6 +59,9 @@ public class ResourceFeedbackController {
       @RequestBody ResourceFeedbackInputModel resourceFeedbackInput,
       HttpSession session) {
 
+    if (resourceFeedbackInput.getDifficulty() <= 0 || resourceFeedbackInput.getDifficulty() > 5) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     Resource resource = this.assertCourseCategoryResource(courseId, categoryId, resourceId);
     ResourceFeedback newResourceFeedback =

@@ -82,4 +82,10 @@ public class Resource {
         .filter(feedback -> feedback.getFeedbackUser().getUserId().equals(user.getUserId()))
         .findFirst();
   }
+
+  public int getAverageFeedbackDifficulty() {
+    return (int)
+        Math.round(
+            getFeedback().stream().mapToInt(ResourceFeedback::getDifficulty).average().orElse(0));
+  }
 }
