@@ -2,6 +2,7 @@ package com.onkibot.backend.api;
 
 import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.*;
+import com.onkibot.backend.database.ids.ExternalResourceApprovalId;
 import com.onkibot.backend.database.repositories.*;
 import com.onkibot.backend.exceptions.*;
 import com.onkibot.backend.models.*;
@@ -150,7 +151,7 @@ public class ExternalResourceController {
             this.resourceRepository, resourceId);
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
 
-    // Check if there is an existing resource with the input parameters in the database.
+    // Check if there is an existing Resource with the input parameters in the database.
     ExternalResource existingExternalResource =
         externalResourceRepository.findByResourceAndUrl(resource, externalResourceInput.getUrl());
 
@@ -160,7 +161,7 @@ public class ExternalResourceController {
           new ExternalResourceModel(existingExternalResource, user), HttpStatus.CONFLICT);
     }
 
-    // Create the new ExternalResource and return it.
+    // Create the new ExternalResource.
     ExternalResource newExternalResource =
         externalResourceRepository.save(
             new ExternalResource(
@@ -169,6 +170,20 @@ public class ExternalResourceController {
                 externalResourceInput.getComment(),
                 externalResourceInput.getUrl(),
                 user));
+
+    // Create a ExternalResourceApprovalId for the new ExternalResource grouped with the User.
+    ExternalResourceApprovalId externalResourceApprovalId =
+        new ExternalResourceApprovalId(newExternalResource, user);
+
+    // Create the ExternalResourceApproval by using the ExternalResourceApprovalId.
+    ExternalResourceApproval externalResourceApproval =
+        externalResourceApprovalRepository.save(
+            new ExternalResourceApproval(externalResourceApprovalId));
+
+    // Add the new ExternalResourceApproval to the new ExternalResource.
+    newExternalResource.getUserApprovals().add(externalResourceApproval);
+
+    // Return the new ExternalResource.
     return new ResponseEntity<>(
         new ExternalResourceModel(newExternalResource, user), HttpStatus.CREATED);
   }
