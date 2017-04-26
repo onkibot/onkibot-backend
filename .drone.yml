@@ -12,6 +12,7 @@ pipeline:
       - export DB_PASSWORD=onkibot_test
       - ./gradlew test
       - ./gradlew jacocoTestReport
+      - ./gradlew javadoc
       - curl -s https://codecov.io/bash | bash -s - -t $CODECOV_TOKEN
     when:
       event: push
