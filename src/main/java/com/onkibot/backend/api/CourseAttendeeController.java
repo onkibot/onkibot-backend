@@ -5,7 +5,6 @@ import com.onkibot.backend.database.entities.Course;
 import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.CourseRepository;
 import com.onkibot.backend.database.repositories.UserRepository;
-import com.onkibot.backend.exceptions.CategoryNotFoundException;
 import com.onkibot.backend.exceptions.CourseNotFoundException;
 import com.onkibot.backend.exceptions.UserNotFoundException;
 import com.onkibot.backend.models.UserModel;
@@ -21,7 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * The CourseAttendeeController controls the request done to the /courses/{courseId}/attendees API URL.
+ * The CourseAttendeeController controls the request done to the /courses/{courseId}/attendees API
+ * URL.
  */
 @RestController
 @RequestMapping(OnkibotBackendApplication.API_BASE_URL + "/courses/{courseId}/attendees")
@@ -35,9 +35,10 @@ public class CourseAttendeeController {
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
-   * @return A Collection of all the User entities formatted through the UserModel
-   *         that are attending the specified Course.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
+   * @return A Collection of all the User entities formatted through the UserModel that are
+   *     attending the specified Course.
    */
   @RequestMapping(method = RequestMethod.GET)
   public List<UserModel> getAll(@PathVariable int courseId, HttpSession session) {
@@ -48,13 +49,14 @@ public class CourseAttendeeController {
 
   /**
    * This request requires a PUT HTTP request to the /courses/{courseId}/attendees/{userId} API URL.
-   * <p>
-   * Only a Instructor that is attending the course is allowed to add a user to the course.
+   *
+   * <p>Only a Instructor that is attending the course is allowed to add a user to the course.
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
    * @param userId The {@link User} ID, this is handled by the PathVariable from Sprint Boot.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
    * @throws UserNotFoundException If a {@link User} with the <code>userId</code> is not found.
    * @return An empty response with an appropriate HTTP status code.
    */
@@ -78,15 +80,17 @@ public class CourseAttendeeController {
   }
 
   /**
-   * This request requires a DELETE HTTP request to the /courses/{courseId}/attendees/{userId} API URL.
-   * <p>
-   * An instructor attending the course is able to delete other users,
-   * and users themselves are also able to remove themselves from the course.
+   * This request requires a DELETE HTTP request to the /courses/{courseId}/attendees/{userId} API
+   * URL.
+   *
+   * <p>An instructor attending the course is able to delete other users, and users themselves are
+   * also able to remove themselves from the course.
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
    * @param userId The {@link User} ID, this is handled by the PathVariable from Sprint Boot.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
    * @throws UserNotFoundException If a {@link User} with the <code>userId</code> is not found.
    * @return An empty response with an appropriate HTTP status code.
    */

@@ -1,17 +1,13 @@
 package com.onkibot.backend.database.entities;
 
 import com.onkibot.backend.database.repositories.UserRepository;
-import com.onkibot.backend.exceptions.CourseNotFoundException;
 import com.onkibot.backend.exceptions.UserNotFoundException;
-
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.persistence.*;
 
-/**
- * The User Entity contains everything related to a User.
- */
+/** The User Entity contains everything related to a User. */
 @Entity
 public class User implements Serializable {
   @Id @GeneratedValue private Integer userId;
@@ -140,8 +136,6 @@ public class User implements Serializable {
    * @return The {@link User} entity if it exists.
    */
   public static User assertUser(UserRepository userRepository, int userId) {
-    return userRepository
-            .findByUserId(userId)
-            .orElseThrow(() -> new UserNotFoundException(userId));
+    return userRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException(userId));
   }
 }

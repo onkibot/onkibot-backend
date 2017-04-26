@@ -5,9 +5,9 @@ import com.onkibot.backend.database.entities.User;
 
 /**
  * This class is used to serializer a {@link ResourceFeedback}.
- * <p>
- * It is essential that we do not show the {@link User} that left the feedback.
- * This makes sure that never happens.
+ *
+ * <p>It is essential that we do not show the {@link User} that left the feedback. This makes sure
+ * that never happens.
  */
 public class ResourceFeedbackModel {
   private int resourceFeedbackId;

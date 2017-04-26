@@ -10,8 +10,8 @@ import javax.persistence.ManyToOne;
 
 /**
  * This is a Composite key for the {@link ExternalResourceApproval} entity.
- * <p>
- * It makes sure a {@link User} only can approve a {@link ExternalResource} once.
+ *
+ * <p>It makes sure a {@link User} only can approve a {@link ExternalResource} once.
  */
 @Embeddable
 public class ExternalResourceApprovalId implements Serializable {

@@ -17,9 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * The SessionController controls the request done to the /signup API URL.
- */
+/** The SessionController controls the request done to the /signup API URL. */
 @RestController
 @RequestMapping(OnkibotBackendApplication.API_BASE_URL + "/signup")
 public class SignupController {
@@ -29,8 +27,8 @@ public class SignupController {
 
   /**
    * This request requires a POST HTTP request to the /session API URL.
-   * <p>
-   * It attempts to sign-up the User.
+   *
+   * <p>It attempts to sign-up the User.
    *
    * @param signupInfo The input model containing the signup information.
    * @param session The current session of the visitor.

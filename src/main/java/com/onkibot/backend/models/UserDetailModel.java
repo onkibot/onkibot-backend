@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 
 /**
  * This class is used to serializer a {@link User}.
- * <p>
- * This shall ONLY be used when returning the model to the {@link User},
- * as it contains personal information such as their email.
+ *
+ * <p>This shall ONLY be used when returning the model to the {@link User}, as it contains personal
+ * information such as their email.
  */
 public class UserDetailModel extends UserModel {
   private String email;

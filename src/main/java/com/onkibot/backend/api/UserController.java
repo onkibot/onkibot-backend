@@ -3,18 +3,14 @@ package com.onkibot.backend.api;
 import com.onkibot.backend.OnkibotBackendApplication;
 import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.UserRepository;
-import com.onkibot.backend.exceptions.CourseNotFoundException;
 import com.onkibot.backend.exceptions.UserNotFoundException;
-import com.onkibot.backend.models.UserDetailModel;
 import com.onkibot.backend.models.UserModel;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * The SessionController controls the request done to the /users API URL.
- */
+/** The SessionController controls the request done to the /users API URL. */
 @RestController
 @RequestMapping(OnkibotBackendApplication.API_BASE_URL + "/users")
 public class UserController {

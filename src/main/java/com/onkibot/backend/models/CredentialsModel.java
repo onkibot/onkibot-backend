@@ -3,8 +3,8 @@ package com.onkibot.backend.models;
 import com.onkibot.backend.database.entities.User;
 
 /**
- * This class is used in the {@link com.onkibot.backend.api.SessionController}
- * when a {@link User} is attempting to login.
+ * This class is used in the {@link com.onkibot.backend.api.SessionController} when a {@link User}
+ * is attempting to login.
  */
 public class CredentialsModel {
   private String email;

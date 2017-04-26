@@ -34,20 +34,27 @@ public class ExternalResourceController {
 
   @Autowired private UserRepository userRepository;
 
-
   /**
    * This request requires a GET HTTP request to the
-   * /courses/{courseId}/categories/{categoryId}/resources/{resourceId}/externals/{externalResourceId} API URL.
+   * /courses/{courseId}/categories/{categoryId}/resources/{resourceId}/externals/{externalResourceId}
+   * API URL.
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
-   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring Boot.
-   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring Boot.
-   * @param externalResourceId The {@link ExternalResource} ID, this is handled by the PathVariable from Spring Boot.
+   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring
+   *     Boot.
+   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring
+   *     Boot.
+   * @param externalResourceId The {@link ExternalResource} ID, this is handled by the PathVariable
+   *     from Spring Boot.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
-   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not found.
-   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not found.
-   * @throws ExternalResourceNotFoundException If an {@link ExternalResource} with the <code>externalResourceId</code> is not found.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
+   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not
+   *     found.
+   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not
+   *     found.
+   * @throws ExternalResourceNotFoundException If an {@link ExternalResource} with the <code>
+   *     externalResourceId</code> is not found.
    * @return The {@link ExternalResource} of the requested <code>externalResourceId</code>.
    */
   @RequestMapping(method = RequestMethod.GET, value = "/{externalResourceId}")
@@ -58,13 +65,12 @@ public class ExternalResourceController {
       @PathVariable int externalResourceId,
       HttpSession session) {
     // Make sure the entities exist.
-    ExternalResource externalResource = ExternalResource
-            .assertCourseCategoryExternalResource(
-                    this.courseRepository, courseId,
-                    this.categoryRepository, categoryId,
-                    this.resourceRepository, resourceId,
-                    this.externalResourceRepository, externalResourceId
-            );
+    ExternalResource externalResource =
+        ExternalResource.assertCourseCategoryExternalResource(
+            this.courseRepository, courseId,
+            this.categoryRepository, categoryId,
+            this.resourceRepository, resourceId,
+            this.externalResourceRepository, externalResourceId);
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     return new ExternalResourceModel(externalResource, user);
   }
@@ -74,13 +80,19 @@ public class ExternalResourceController {
    * /courses/{courseId}/categories/{categoryId}/resources/{resourceId}/externals API URL.
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
-   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring Boot.
-   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring Boot.
+   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring
+   *     Boot.
+   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring
+   *     Boot.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
-   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not found.
-   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not found.
-   * @return A Collection of all the {@link ExternalResource} entities formatted through the {@link ExternalResourceModel}.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
+   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not
+   *     found.
+   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not
+   *     found.
+   * @return A Collection of all the {@link ExternalResource} entities formatted through the {@link
+   *     ExternalResourceModel}.
    */
   @RequestMapping(method = RequestMethod.GET)
   Collection<ExternalResourceModel> getAll(
@@ -89,11 +101,11 @@ public class ExternalResourceController {
       @PathVariable int resourceId,
       HttpSession session) {
     // Assert that the entities exist.
-    Resource resource = Resource.assertCourseCategoryResource(
+    Resource resource =
+        Resource.assertCourseCategoryResource(
             this.courseRepository, courseId,
             this.categoryRepository, categoryId,
-            this.resourceRepository, resourceId
-    );
+            this.resourceRepository, resourceId);
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     return resource
         .getExternalResources()
@@ -107,14 +119,20 @@ public class ExternalResourceController {
    * /courses/{courseId}/categories/{categoryId}/resources/{resourceId}/externals API URL.
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
-   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring Boot.
-   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring Boot.
+   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring
+   *     Boot.
+   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring
+   *     Boot.
    * @param externalResourceInput The input for the new {@link ExternalResource}.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
-   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not found.
-   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not found.
-   * @return The new {@link ExternalResource} entity formatted through the {@link ExternalResourceModel}.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
+   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not
+   *     found.
+   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not
+   *     found.
+   * @return The new {@link ExternalResource} entity formatted through the {@link
+   *     ExternalResourceModel}.
    */
   @RequestMapping(method = RequestMethod.POST)
   ResponseEntity<ExternalResourceModel> post(
@@ -125,12 +143,23 @@ public class ExternalResourceController {
       HttpSession session) {
 
     // Assert that the entities exist.
-    Resource resource = Resource.assertCourseCategoryResource(
+    Resource resource =
+        Resource.assertCourseCategoryResource(
             this.courseRepository, courseId,
             this.categoryRepository, categoryId,
-            this.resourceRepository, resourceId
-    );
+            this.resourceRepository, resourceId);
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
+
+    // Check if there is an existing resource with the input parameters in the database.
+    ExternalResource existingExternalResource =
+        externalResourceRepository.findByResourceAndUrl(resource, externalResourceInput.getUrl());
+
+    // If the existingExternalResource is not null, it exists, throw a Conflict (409).
+    if (existingExternalResource != null) {
+      return new ResponseEntity<>(
+          new ExternalResourceModel(existingExternalResource, user), HttpStatus.CONFLICT);
+    }
+
     // Create the new ExternalResource and return it.
     ExternalResource newExternalResource =
         externalResourceRepository.save(
@@ -146,20 +175,28 @@ public class ExternalResourceController {
 
   /**
    * This request requires a DELETE HTTP request to the
-   * /courses/{courseId}/categories/{categoryId}/resources/{resourceId}/externals/{externalResourceId} API URL.
-   * <p>
-   * Returns a Forbidden if the user is not an instructor or
-   * the {@link ExternalResource} is not the request {@link User}s' own {@link ExternalResource}.
+   * /courses/{courseId}/categories/{categoryId}/resources/{resourceId}/externals/{externalResourceId}
+   * API URL.
+   *
+   * <p>Returns a Forbidden if the user is not an instructor or the {@link ExternalResource} is not
+   * the request {@link User}s' own {@link ExternalResource}.
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
-   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring Boot.
-   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring Boot.
-   * @param externalResourceId The {@link ExternalResource} ID, this is handled by the PathVariable from Spring Boot.
+   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring
+   *     Boot.
+   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring
+   *     Boot.
+   * @param externalResourceId The {@link ExternalResource} ID, this is handled by the PathVariable
+   *     from Spring Boot.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
-   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not found.
-   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not found.
-   * @throws ExternalResourceNotFoundException If an {@link ExternalResource} with the <code>externalResourceId</code> is not found.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
+   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not
+   *     found.
+   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not
+   *     found.
+   * @throws ExternalResourceNotFoundException If an {@link ExternalResource} with the <code>
+   *     externalResourceId</code> is not found.
    * @return An empty response with an appropriate HTTP status code.
    */
   @RequestMapping(method = RequestMethod.DELETE, value = "/{externalResourceId}")
@@ -171,13 +208,12 @@ public class ExternalResourceController {
       HttpSession session) {
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     // Make sure the entities exist.
-    ExternalResource externalResource = ExternalResource
-            .assertCourseCategoryExternalResource(
-                    this.courseRepository, courseId,
-                    this.categoryRepository, categoryId,
-                    this.resourceRepository, resourceId,
-                    this.externalResourceRepository, externalResourceId
-            );
+    ExternalResource externalResource =
+        ExternalResource.assertCourseCategoryExternalResource(
+            this.courseRepository, courseId,
+            this.categoryRepository, categoryId,
+            this.resourceRepository, resourceId,
+            this.externalResourceRepository, externalResourceId);
     // Check if the User is an instructor or is creator of the ExternalResource.
     if (!user.getIsInstructor()
         || !externalResource.getPublisherUser().getUserId().equals(user.getUserId())) {

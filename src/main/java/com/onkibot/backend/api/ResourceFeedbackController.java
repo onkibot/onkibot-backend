@@ -34,16 +34,24 @@ public class ResourceFeedbackController {
 
   /**
    * This request requires a GET HTTP request to the
-   * /courses/{courseId}/categories/{categoryId}/resources/{resourceId}/feedback/{resourceFeedbackId} API URL.
+   * /courses/{courseId}/categories/{categoryId}/resources/{resourceId}/feedback/{resourceFeedbackId}
+   * API URL.
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
-   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring Boot.
-   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring Boot.
-   * @param resourceFeedbackId The {@link ResourceFeedback} ID, this is handled by the PathVariable from Spring Boot.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
-   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not found.
-   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not found.
-   * @throws ResourceFeedbackNotFoundException If a {@link ResourceFeedback} with the <code>resourceFeedbackId</code> is not found.
+   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring
+   *     Boot.
+   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring
+   *     Boot.
+   * @param resourceFeedbackId The {@link ResourceFeedback} ID, this is handled by the PathVariable
+   *     from Spring Boot.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
+   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not
+   *     found.
+   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not
+   *     found.
+   * @throws ResourceFeedbackNotFoundException If a {@link ResourceFeedback} with the <code>
+   *     resourceFeedbackId</code> is not found.
    * @return The {@link ResourceFeedbackModel} of the requested <code>resourceFeedbackId</code>.
    */
   @RequestMapping(method = RequestMethod.GET, value = "/{resourceFeedbackId}")
@@ -53,12 +61,12 @@ public class ResourceFeedbackController {
       @PathVariable int resourceId,
       @PathVariable int resourceFeedbackId) {
     // Assert the entities and return the Model.
-    ResourceFeedback resourceFeedback = ResourceFeedback.assertCourseCategoryResourceFeedback(
+    ResourceFeedback resourceFeedback =
+        ResourceFeedback.assertCourseCategoryResourceFeedback(
             this.courseRepository, courseId,
             this.categoryRepository, categoryId,
             this.resourceRepository, resourceId,
-            this.resourceFeedbackRepository, resourceFeedbackId
-    );
+            this.resourceFeedbackRepository, resourceFeedbackId);
     return new ResourceFeedbackModel(resourceFeedback);
   }
 
@@ -67,22 +75,28 @@ public class ResourceFeedbackController {
    * /courses/{courseId}/categories/{categoryId}/resources/{resourceId}/feedback API URL.
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
-   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring Boot.
-   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring Boot.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
-   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not found.
-   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not found.
-   * @return A Collection of all the {@link ResourceFeedback} entities formatted through the {@link ResourceFeedbackModel}.
+   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring
+   *     Boot.
+   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring
+   *     Boot.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
+   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not
+   *     found.
+   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not
+   *     found.
+   * @return A Collection of all the {@link ResourceFeedback} entities formatted through the {@link
+   *     ResourceFeedbackModel}.
    */
   @RequestMapping(method = RequestMethod.GET)
   Collection<ResourceFeedbackModel> getAll(
       @PathVariable int courseId, @PathVariable int categoryId, @PathVariable int resourceId) {
     // Assert the entities and return the Collection with Models.
-    Resource resource = Resource.assertCourseCategoryResource(
+    Resource resource =
+        Resource.assertCourseCategoryResource(
             this.courseRepository, courseId,
             this.categoryRepository, categoryId,
-            this.resourceRepository, resourceId
-    );
+            this.resourceRepository, resourceId);
     return resource
         .getFeedback()
         .stream()
@@ -95,14 +109,20 @@ public class ResourceFeedbackController {
    * /courses/{courseId}/categories/{categoryId}/resources/{resourceId}/feedback API URL.
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
-   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring Boot.
-   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring Boot.
+   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring
+   *     Boot.
+   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring
+   *     Boot.
    * @param resourceFeedbackInput The input for the new {@link ResourceFeedback}.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
-   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not found.
-   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not found.
-   * @return The new {@link ResourceFeedback} entity formatted through the {@link ResourceFeedbackModel}.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
+   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not
+   *     found.
+   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not
+   *     found.
+   * @return The new {@link ResourceFeedback} entity formatted through the {@link
+   *     ResourceFeedbackModel}.
    */
   @RequestMapping(method = RequestMethod.POST)
   ResponseEntity<ResourceFeedbackModel> post(
@@ -119,11 +139,11 @@ public class ResourceFeedbackController {
 
     // Assert the entities.
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
-    Resource resource = Resource.assertCourseCategoryResource(
+    Resource resource =
+        Resource.assertCourseCategoryResource(
             this.courseRepository, courseId,
             this.categoryRepository, categoryId,
-            this.resourceRepository, resourceId
-    );
+            this.resourceRepository, resourceId);
     // Create the new ResourceFeedback and return it.
     ResourceFeedback newResourceFeedback =
         resourceFeedbackRepository.save(
@@ -137,19 +157,28 @@ public class ResourceFeedbackController {
 
   /**
    * This request requires a DELETE HTTP request to the
-   * /courses/{courseId}/categories/{categoryId}/resources/{resourceId}/feedback/{resourceFeedbackId} API URL.
-   * <p>
-   * Returns a {@link HttpStatus#FORBIDDEN} if the {@link ResourceFeedback} is not the request {@link User}s' own {@link ResourceFeedback}.
+   * /courses/{courseId}/categories/{categoryId}/resources/{resourceId}/feedback/{resourceFeedbackId}
+   * API URL.
+   *
+   * <p>Returns a {@link HttpStatus#FORBIDDEN} if the {@link ResourceFeedback} is not the request
+   * {@link User}s' own {@link ResourceFeedback}.
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
-   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring Boot.
-   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring Boot.
-   * @param resourceFeedbackId The {@link ResourceFeedback} ID, this is handled by the PathVariable from Spring Boot.
+   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring
+   *     Boot.
+   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring
+   *     Boot.
+   * @param resourceFeedbackId The {@link ResourceFeedback} ID, this is handled by the PathVariable
+   *     from Spring Boot.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
-   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not found.
-   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not found.
-   * @throws ResourceFeedbackNotFoundException If an {@link ResourceFeedback} with the <code>resourceFeedbackId</code> is not found.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
+   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not
+   *     found.
+   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not
+   *     found.
+   * @throws ResourceFeedbackNotFoundException If an {@link ResourceFeedback} with the <code>
+   *     resourceFeedbackId</code> is not found.
    * @return An empty response with an appropriate HTTP status code.
    */
   @RequestMapping(method = RequestMethod.DELETE, value = "/{resourceFeedbackId}")
@@ -160,12 +189,12 @@ public class ResourceFeedbackController {
       @PathVariable int resourceFeedbackId,
       HttpSession session) {
     // Assert the entities.
-    ResourceFeedback resourceFeedback = ResourceFeedback.assertCourseCategoryResourceFeedback(
+    ResourceFeedback resourceFeedback =
+        ResourceFeedback.assertCourseCategoryResourceFeedback(
             this.courseRepository, courseId,
             this.categoryRepository, categoryId,
             this.resourceRepository, resourceId,
-            this.resourceFeedbackRepository, resourceFeedbackId
-    );
+            this.resourceFeedbackRepository, resourceFeedbackId);
     User sessionUser = OnkibotBackendApplication.assertSessionUser(userRepository, session);
 
     // Check if the User deleting the feedback is the same as the user that created the feedback.

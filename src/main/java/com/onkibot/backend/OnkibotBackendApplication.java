@@ -8,9 +8,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-/**
- * The entry point of this project.
- */
+/** The entry point of this project. */
 @SpringBootApplication
 public class OnkibotBackendApplication {
   public static final String API_BASE_URL = "/api/v1";
@@ -20,7 +18,8 @@ public class OnkibotBackendApplication {
    *
    * @param userRepository The Repository service for the {@link User} entity.
    * @param session The {@link HttpSession} we want to get the {@link User} from.
-   * @return The {@link User} of the <code>session</code> or {@link Optional#empty()} if the session is not set.
+   * @return The {@link User} of the <code>session</code> or {@link Optional#empty()} if the session
+   *     is not set.
    */
   public static Optional<User> getSessionUser(UserRepository userRepository, HttpSession session) {
     Integer userId = (Integer) session.getAttribute("userId");
@@ -32,11 +31,10 @@ public class OnkibotBackendApplication {
   }
 
   /**
-   *
    * @param userRepository The Repository service for the {@link User} entity.
    * @param session The {@link HttpSession} we want to assert.
-   * @throws UserNotFoundException If the <code>userId</code> in the <code>session</code> is not set,
-   *                               or {@link User} from the <code>session</code> is not found.
+   * @throws UserNotFoundException If the <code>userId</code> in the <code>session</code> is not
+   *     set, or {@link User} from the <code>session</code> is not found.
    * @return The {@link User} of the <code>session</code>.
    */
   public static User assertSessionUser(UserRepository userRepository, HttpSession session) {

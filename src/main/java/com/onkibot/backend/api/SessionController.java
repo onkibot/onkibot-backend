@@ -1,7 +1,6 @@
 package com.onkibot.backend.api;
 
 import com.onkibot.backend.OnkibotBackendApplication;
-import com.onkibot.backend.database.entities.Course;
 import com.onkibot.backend.database.entities.User;
 import com.onkibot.backend.database.repositories.UserRepository;
 import com.onkibot.backend.models.CredentialsModel;
@@ -16,9 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * The SessionController controls the request done to the /session API URL.
- */
+/** The SessionController controls the request done to the /session API URL. */
 @RestController
 @RequestMapping(OnkibotBackendApplication.API_BASE_URL + "/session")
 public class SessionController {
@@ -50,7 +47,8 @@ public class SessionController {
    * This request requires a GET HTTP request to the /session API URL.
    *
    * @param session The current session of the visitor.
-   * @return The User entity formatted through the {@link UserDetailModel} or NULL if the user is not logged in.
+   * @return The User entity formatted through the {@link UserDetailModel} or NULL if the user is
+   *     not logged in.
    */
   @RequestMapping(method = RequestMethod.GET)
   public ResponseEntity<UserDetailModel> session(HttpSession session) {
@@ -61,8 +59,8 @@ public class SessionController {
 
   /**
    * This request requires a DELETE HTTP request to the /session API URL.
-   * <p>
-   * It logs the user out.
+   *
+   * <p>It logs the user out.
    *
    * @param session The current session of the visitor that we wish to logout.
    */

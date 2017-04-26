@@ -16,9 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * The CourseController controls the request done to the /courses/{courseId}/attendees API URL.
- */
+/** The CourseController controls the request done to the /courses/{courseId}/attendees API URL. */
 @RestController
 @RequestMapping(OnkibotBackendApplication.API_BASE_URL + "/courses")
 public class CourseController {
@@ -31,7 +29,8 @@ public class CourseController {
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
    * @return The CourseModel of the requested <code>courseId</code>.
    */
   @RequestMapping(method = RequestMethod.GET, value = "/{courseId}")
@@ -46,7 +45,8 @@ public class CourseController {
    * This request requires a GET HTTP request to the /courses API URL.
    *
    * @param session The current session of the visitor.
-   * @return A Collection of all the {@link Course} entities formatted through the {@link CourseModel}.
+   * @return A Collection of all the {@link Course} entities formatted through the {@link
+   *     CourseModel}.
    */
   @RequestMapping(method = RequestMethod.GET)
   public List<CourseModel> getAll(HttpSession session) {
@@ -80,12 +80,14 @@ public class CourseController {
 
   /**
    * This request requires a DELETE HTTP request to the /courses/{courseId} API URL.
-   * <p>
-   * Only a Instructor that is attending the {@link Course} is allowed to delete the {@link Course}.
+   *
+   * <p>Only a Instructor that is attending the {@link Course} is allowed to delete the {@link
+   * Course}.
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
    * @return An empty request with the HTTP 204 (No Content) Status Code.
    */
   @RequestMapping(method = RequestMethod.DELETE, value = "/{courseId}")

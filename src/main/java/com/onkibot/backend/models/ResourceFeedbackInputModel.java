@@ -4,8 +4,8 @@ import com.onkibot.backend.database.entities.ResourceFeedback;
 import com.onkibot.backend.database.entities.User;
 
 /**
- * This class is used in the {@link com.onkibot.backend.api.ResourceFeedbackController}
- * when a {@link User} is attempting to create a new {@link ResourceFeedback}.
+ * This class is used in the {@link com.onkibot.backend.api.ResourceFeedbackController} when a
+ * {@link User} is attempting to create a new {@link ResourceFeedback}.
  */
 public class ResourceFeedbackInputModel {
   private String comment;

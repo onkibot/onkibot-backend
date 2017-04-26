@@ -5,15 +5,11 @@ import com.onkibot.backend.database.repositories.CourseRepository;
 import com.onkibot.backend.database.repositories.ResourceRepository;
 import com.onkibot.backend.exceptions.CategoryNotFoundException;
 import com.onkibot.backend.exceptions.CourseNotFoundException;
-import com.onkibot.backend.exceptions.ExternalResourceNotFoundException;
 import com.onkibot.backend.exceptions.ResourceNotFoundException;
-
 import java.util.*;
 import javax.persistence.*;
 
-/**
- * The Resource Entity contains everything related to the Resource of a {@link Category}.
- */
+/** The Resource Entity contains everything related to the Resource of a {@link Category}. */
 @Entity
 public class Resource {
   @Id @GeneratedValue private Integer resourceId;
@@ -96,17 +92,18 @@ public class Resource {
 
   public int getAverageFeedbackDifficulty() {
     return (int)
-            Math.round(
-                    getFeedback().stream().mapToInt(ResourceFeedback::getDifficulty).average().orElse(0));
+        Math.round(
+            getFeedback().stream().mapToInt(ResourceFeedback::getDifficulty).average().orElse(0));
   }
 
   /**
    * Assert that the {@link Resource} with the ID <code>resourceId</code> exists.
-   * <p>
-   * The method also asserts that these entities exist:
+   *
+   * <p>The method also asserts that these entities exist:
+   *
    * <ul>
-   * <li>{@link Course}</li>
-   * <li>{@link Category}</li>
+   *   <li>{@link Course}
+   *   <li>{@link Category}
    * </ul>
    *
    * @param courseRepository The Repository service for the {@link Course} entity.
@@ -115,20 +112,27 @@ public class Resource {
    * @param categoryId The ID of the {@link Category} entity we want to assert.
    * @param resourceRepository The Repository service for the {@link Resource} entity.
    * @param resourceId The ID of the {@link Resource} entity we want to assert.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
-   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not found.
-   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not found.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
+   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not
+   *     found.
+   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not
+   *     found.
    * @return The {@link Resource} entity if it exists.
    */
   public static Resource assertCourseCategoryResource(
-          CourseRepository courseRepository, int courseId,
-          CategoryRepository categoryRepository, int categoryId,
-          ResourceRepository resourceRepository, int resourceId) {
-    Category category = Category.assertCourseCategory(courseRepository, courseId, categoryRepository, categoryId);
+      CourseRepository courseRepository,
+      int courseId,
+      CategoryRepository categoryRepository,
+      int categoryId,
+      ResourceRepository resourceRepository,
+      int resourceId) {
+    Category category =
+        Category.assertCourseCategory(courseRepository, courseId, categoryRepository, categoryId);
     Resource resource =
-            resourceRepository
-                    .findByResourceId(resourceId)
-                    .orElseThrow(() -> new ResourceNotFoundException(resourceId));
+        resourceRepository
+            .findByResourceId(resourceId)
+            .orElseThrow(() -> new ResourceNotFoundException(resourceId));
     if (!resource.getCategory().getCategoryId().equals(category.getCategoryId())) {
       throw new ResourceNotFoundException(categoryId);
     }

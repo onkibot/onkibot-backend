@@ -43,12 +43,17 @@ public class ResourceController {
    * /courses/{courseId}/categories/{categoryId}/resources/{resourceId} API URL.
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
-   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring Boot.
-   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring Boot.
+   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring
+   *     Boot.
+   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring
+   *     Boot.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
-   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not found.
-   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not found..
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
+   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not
+   *     found.
+   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not
+   *     found..
    * @return The {@link ResourceModel} of the requested <code>resourceId</code>.
    */
   @RequestMapping(method = RequestMethod.GET, value = "/{resourceId}")
@@ -59,11 +64,11 @@ public class ResourceController {
       HttpSession session) {
     // Assert the User and entities, then return the ResourceModel.
     User sessionUser = OnkibotBackendApplication.assertSessionUser(userRepository, session);
-    Resource resource = Resource.assertCourseCategoryResource(
-        this.courseRepository, courseId,
-        this.categoryRepository, categoryId,
-        this.resourceRepository, resourceId
-    );
+    Resource resource =
+        Resource.assertCourseCategoryResource(
+            this.courseRepository, courseId,
+            this.categoryRepository, categoryId,
+            this.resourceRepository, resourceId);
     return new ResourceModel(resource, sessionUser);
   }
 
@@ -72,21 +77,25 @@ public class ResourceController {
    * /courses/{courseId}/categories/{categoryId}/resources API URL.
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
-   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring Boot.
+   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring
+   *     Boot.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
-   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not found.
-   * @return A Collection of all the {@link Resource} entities formatted through the {@link ResourceModel}.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
+   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not
+   *     found.
+   * @return A Collection of all the {@link Resource} entities formatted through the {@link
+   *     ResourceModel}.
    */
   @RequestMapping(method = RequestMethod.GET)
   Collection<ResourceModel> getAll(
       @PathVariable int courseId, @PathVariable int categoryId, HttpSession session) {
     // Assert the User and entities, then return the Collection of ResourceModels.
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
-    Category category = Category.assertCourseCategory(
+    Category category =
+        Category.assertCourseCategory(
             this.courseRepository, courseId,
-            this.categoryRepository, categoryId
-    );
+            this.categoryRepository, categoryId);
     Set<Resource> resources = category.getResources();
     return resources
         .stream()
@@ -97,15 +106,18 @@ public class ResourceController {
   /**
    * This request requires a POST HTTP request to the
    * /courses/{courseId}/categories/{categoryId}/resources API URL.
-   * <p>
-   * {@link ExternalResource}s sent in the <code>resourceInput</code> parameter is also created.
+   *
+   * <p>{@link ExternalResource}s sent in the <code>resourceInput</code> parameter is also created.
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
-   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring Boot.
+   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring
+   *     Boot.
    * @param resourceInput The input for the new {@link Resource}.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
-   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not found.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
+   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not
+   *     found.
    * @return The new {@link Resource} entity formatted through the {@link ResourceModel}.
    */
   @RequestMapping(method = RequestMethod.POST)
@@ -116,10 +128,10 @@ public class ResourceController {
       HttpSession session) {
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     // Assert that the Course and Category exists.
-    Category category = Category.assertCourseCategory(
+    Category category =
+        Category.assertCourseCategory(
             this.courseRepository, courseId,
-            this.categoryRepository, categoryId
-    );
+            this.categoryRepository, categoryId);
     // Create the new Resource.
     Resource newResource =
         new Resource(
@@ -159,17 +171,22 @@ public class ResourceController {
   /**
    * This request requires a DELETE HTTP request to the
    * /courses/{courseId}/categories/{categoryId}/resources/{resourceId} API URL.
-   * <p>
-   * Returns a Forbidden if the user is not an instructor or
-   * the Resource is not the request Users' own Resource.
+   *
+   * <p>Returns a Forbidden if the user is not an instructor or the Resource is not the request
+   * Users' own Resource.
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
-   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring Boot.
-   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring Boot.
+   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Spring
+   *     Boot.
+   * @param resourceId The {@link Resource} ID, this is handled by the PathVariable from Spring
+   *     Boot.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
-   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not found.
-   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not found.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
+   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not
+   *     found.
+   * @throws ResourceNotFoundException If a {@link Resource} with the <code>resourceId</code> is not
+   *     found.
    * @return An empty response with an appropriate HTTP status code.
    */
   @RequestMapping(method = RequestMethod.DELETE, value = "/{resourceId}")
@@ -180,11 +197,11 @@ public class ResourceController {
       HttpSession session) {
     // Make sure the entities exist.
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
-    Resource resource = Resource.assertCourseCategoryResource(
+    Resource resource =
+        Resource.assertCourseCategoryResource(
             this.courseRepository, courseId,
             this.categoryRepository, categoryId,
-            this.resourceRepository, resourceId
-    );
+            this.resourceRepository, resourceId);
     // Check if the User is an instructor or is creator of the Resource.
     if (!user.getIsInstructor()
         || !resource.getPublisherUser().getUserId().equals(user.getUserId())) {

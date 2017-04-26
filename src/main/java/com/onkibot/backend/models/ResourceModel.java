@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * This class is used to serializer a {@link Resource}.
- */
+/** This class is used to serializer a {@link Resource}. */
 public class ResourceModel {
   private int resourceId;
   private int categoryId;

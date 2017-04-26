@@ -5,9 +5,7 @@ import com.onkibot.backend.database.entities.User;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * This class is used to serializer a {@link Course}.
- */
+/** This class is used to serializer a {@link Course}. */
 public class CourseModel {
   private int courseId;
   private String name;

@@ -4,8 +4,8 @@ import com.onkibot.backend.database.entities.Category;
 import com.onkibot.backend.database.entities.User;
 
 /**
- * This class is used in the {@link com.onkibot.backend.api.CategoryController}
- * when a {@link User} is attempting to create a new {@link Category}.
+ * This class is used in the {@link com.onkibot.backend.api.CategoryController} when a {@link User}
+ * is attempting to create a new {@link Category}.
  */
 public class CategoryInputModel {
   private String name;

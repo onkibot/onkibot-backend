@@ -32,13 +32,17 @@ public class CategoryController {
   @Autowired private UserRepository userRepository;
 
   /**
-   * This request requires a GET HTTP request to the /courses/{courseId}/categories/{categoryId} API URL.
+   * This request requires a GET HTTP request to the /courses/{courseId}/categories/{categoryId} API
+   * URL.
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
-   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Sprint Boot.
+   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Sprint
+   *     Boot.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
-   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not found.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
+   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not
+   *     found.
    * @return The {@link CategoryModel} of the requested <code>categoryId</code>.
    */
   @RequestMapping(method = RequestMethod.GET, value = "/{categoryId}")
@@ -48,7 +52,9 @@ public class CategoryController {
     throws a CourseNotFoundException if the Course is not found,
     and throws a CategoryNotFoundException if the Category is not found.
     */
-    Category category = Category.assertCourseCategory(this.courseRepository, courseId, this.categoryRepository, categoryId);
+    Category category =
+        Category.assertCourseCategory(
+            this.courseRepository, courseId, this.categoryRepository, categoryId);
     // Grab the session user.
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
     // Return the Category entity formatted through the CategoryModel.
@@ -60,8 +66,10 @@ public class CategoryController {
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
-   * @return A Collection of all the {@link Category} entities formatted through the {@link CategoryModel}.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
+   * @return A Collection of all the {@link Category} entities formatted through the {@link
+   *     CategoryModel}.
    */
   @RequestMapping(method = RequestMethod.GET)
   Collection<CategoryModel> getAll(@PathVariable int courseId, HttpSession session) {
@@ -86,7 +94,8 @@ public class CategoryController {
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
    * @param categoryInput The input for the new {@link Category}.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
    * @return The new {@link Category} entity formatted through the {@link CategoryModel}.
    */
   @RequestMapping(method = RequestMethod.POST)
@@ -110,22 +119,29 @@ public class CategoryController {
   }
 
   /**
-   * This request requires a DELETE HTTP request to the /courses/{courseId}/categories/{categoryId} API URL.
-   * <p>
-   * Only a Instructor that is attending the {@link Course} is allowed to delete the {@link Category}.
+   * This request requires a DELETE HTTP request to the /courses/{courseId}/categories/{categoryId}
+   * API URL.
+   *
+   * <p>Only a Instructor that is attending the {@link Course} is allowed to delete the {@link
+   * Category}.
    *
    * @param courseId The {@link Course} ID, this is handled by the PathVariable from Spring Boot.
-   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Sprint Boot.
+   * @param categoryId The {@link Category} ID, this is handled by the PathVariable from Sprint
+   *     Boot.
    * @param session The current session of the visitor.
-   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not found.
-   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not found.
+   * @throws CourseNotFoundException If a {@link Course} with the <code>courseId</code> is not
+   *     found.
+   * @throws CategoryNotFoundException If a {@link Category} with the <code>categoryId</code> is not
+   *     found.
    * @return An empty request with the HTTP 204 (No Content) Status Code.
    */
   @RequestMapping(method = RequestMethod.DELETE, value = "/{categoryId}")
   public ResponseEntity<Void> delete(
       @PathVariable int courseId, @PathVariable int categoryId, HttpSession session) {
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
-    Category category = Category.assertCourseCategory(this.courseRepository, courseId, this.categoryRepository, categoryId);
+    Category category =
+        Category.assertCourseCategory(
+            this.courseRepository, courseId, this.categoryRepository, categoryId);
     /*
     Check if the user is an instructor and is attending the specified course.
     Returns a 403 (Forbidden) if not.
