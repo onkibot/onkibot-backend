@@ -66,9 +66,14 @@ public class ExternalResourceController {
       @PathVariable int resourceId,
       @RequestBody ExternalResourceInputModel externalResourceInput,
       HttpSession session) {
-
     Resource resource = this.assertCourseCategoryResource(courseId, categoryId, resourceId);
     User user = OnkibotBackendApplication.assertSessionUser(userRepository, session);
+    ExternalResource externalResource =
+        externalResourceRepository.findByResourceAndUrl(resource, externalResourceInput.getUrl());
+    if (externalResource != null) {
+      return new ResponseEntity<>(
+          new ExternalResourceModel(externalResource, user), HttpStatus.CONFLICT);
+    }
     ExternalResource newExternalResource =
         externalResourceRepository.save(
             new ExternalResource(

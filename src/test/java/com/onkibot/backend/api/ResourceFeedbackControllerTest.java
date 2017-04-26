@@ -597,7 +597,11 @@ public class ResourceFeedbackControllerTest {
     // Setup resource
     Resource resource =
         new Resource(
-            category, UUID.randomUUID().toString(), UUID.randomUUID().toString(), feedbackUser);
+            category,
+            UUID.randomUUID().toString(),
+            UUID.randomUUID().toString(),
+            UUID.randomUUID().toString(),
+            feedbackUser);
     resourceRepository.save(resource);
     return resource;
   }

@@ -1,6 +1,7 @@
 package com.onkibot.backend.database.entities;
 
 import java.io.Serializable;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.persistence.*;
 
@@ -40,6 +41,7 @@ public class ExternalResource implements Serializable {
     this.comment = comment;
     this.url = url;
     this.publisherUser = publisherUser;
+    this.userApprovals = new LinkedHashSet<>();
   }
 
   public Integer getExternalResourceId() {
@@ -68,6 +70,10 @@ public class ExternalResource implements Serializable {
 
   public Set<ExternalResourceApproval> getUserApprovals() {
     return userApprovals;
+  }
+
+  public int getUserApprovalsCount() {
+    return userApprovals.size();
   }
 
   public boolean hasUserApproved(User user) {

@@ -425,6 +425,59 @@ public class ExternalResourceControllerTest {
     username = "test@onkibot.com",
     authorities = {"USER"}
   )
+  public void testCreateDuplicateExternalResourceWithAuthentication() throws Exception {
+    ObjectMapper mapper = new ObjectMapper();
+
+    User publisherUser = createRepositoryUser();
+    Course course = createRepositoryCourse();
+    Category category = createRepositoryCategory(course);
+    Resource resource = createRepositoryResource(category, publisherUser);
+    ExternalResource externalResource = createRepositoryExternalResource(resource, publisherUser);
+
+    ExternalResourceInputModel externalResourceInputModel =
+        new ExternalResourceInputModel(
+            externalResource.getTitle(), externalResource.getComment(), externalResource.getUrl());
+
+    MockHttpSession mockHttpSession =
+        new MockHttpSession(
+            webApplicationContext.getServletContext(), UUID.randomUUID().toString());
+    mockHttpSession.setAttribute("userId", publisherUser.getUserId());
+
+    MvcResult externalResourceCreationResult =
+        this.mockMvc
+            .perform(
+                post(API_URL_COURSE
+                        + "/"
+                        + course.getCourseId()
+                        + "/"
+                        + API_PATH_CATEGORY
+                        + "/"
+                        + category.getCategoryId()
+                        + "/"
+                        + API_PATH_RESOURCE
+                        + "/"
+                        + resource.getResourceId()
+                        + "/"
+                        + API_PATH_EXTERNAL_RESOURCE)
+                    .session(mockHttpSession)
+                    .content(mapper.writeValueAsString(externalResourceInputModel))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.ALL))
+            .andExpect(status().isConflict())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andReturn();
+
+    String jsonString = externalResourceCreationResult.getResponse().getContentAsString();
+
+    assertResponseModel(
+        externalResource, mapper.readValue(jsonString, ExternalResourceModel.class));
+  }
+
+  @Test
+  @WithMockUser(
+    username = "test@onkibot.com",
+    authorities = {"USER"}
+  )
   public void testCreateExternalResourceWithAuthentication() throws Exception {
     ObjectMapper mapper = new ObjectMapper();
 
@@ -490,7 +543,11 @@ public class ExternalResourceControllerTest {
     // Setup resource
     Resource resource =
         new Resource(
-            category, UUID.randomUUID().toString(), UUID.randomUUID().toString(), publisherUser);
+            category,
+            UUID.randomUUID().toString(),
+            UUID.randomUUID().toString(),
+            UUID.randomUUID().toString(),
+            publisherUser);
     resourceRepository.save(resource);
     return resource;
   }
