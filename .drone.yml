@@ -16,6 +16,8 @@ pipeline:
       - curl -s https://codecov.io/bash | bash -s - -t $CODECOV_TOKEN
     when:
       event: push
+      branch:
+        exclude: [ master, development ]
 
   development:
     image: docker/compose:1.8.1
@@ -48,5 +50,5 @@ pipeline:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     when:   
-      branch: master
+      branch: refs/tags/*
       event: tag

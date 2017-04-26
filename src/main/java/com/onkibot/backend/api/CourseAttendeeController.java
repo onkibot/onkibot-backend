@@ -68,8 +68,13 @@ public class CourseAttendeeController {
     Course course = Course.assertCourse(courseRepository, courseId, user);
     // Check if the user is an Instructor.
     if (user.getIsInstructor()) {
-      // Make sure the User with the userId parameter exists and add the user to the Course.
+      // Make sure the User with the userId parameter exists.
       User addUser = User.assertUser(this.userRepository, userId);
+      // Check if the User is already attending the Course.
+      if (addUser.isAttending(course)) {
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
+      }
+      // Add the User as attending to the Course.
       addUser.getAttending().add(course);
       userRepository.save(addUser);
       return new ResponseEntity<>(HttpStatus.CREATED);
