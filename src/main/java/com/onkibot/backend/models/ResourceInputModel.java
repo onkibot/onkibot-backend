@@ -1,7 +1,13 @@
 package com.onkibot.backend.models;
 
+import com.onkibot.backend.database.entities.Resource;
+import com.onkibot.backend.database.entities.User;
 import java.util.List;
 
+/**
+ * This class is used in the {@link com.onkibot.backend.api.ResourceController} when a {@link User}
+ * is attempting to create a new {@link Resource}.
+ */
 public class ResourceInputModel {
   private String name;
   private String body;

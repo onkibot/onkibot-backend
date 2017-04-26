@@ -3,6 +3,7 @@ package com.onkibot.backend.models;
 import com.onkibot.backend.database.entities.ExternalResource;
 import com.onkibot.backend.database.entities.User;
 
+/** This class is used to serializer a {@link ExternalResource}. */
 public class ExternalResourceModel {
   private int externalResourceId;
   private int resourceId;

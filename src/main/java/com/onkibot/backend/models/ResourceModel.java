@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/** This class is used to serializer a {@link Resource}. */
 public class ResourceModel {
   private int resourceId;
   private int categoryId;
@@ -27,12 +28,15 @@ public class ResourceModel {
     this.body = resource.getBody();
     this.comment = resource.getComment();
     this.publisherUser = new UserModel(resource.getPublisherUser());
+    // Add the list of the ExternalResources for the Resource.
     this.externalResources =
         resource
             .getExternalResources()
             .stream()
             .map(externalResource -> new ExternalResourceModel(externalResource, forUser))
             .collect(Collectors.toList());
+    // Add the ResourceFeedback that the User gave this
+    // ExternalResource if any, else it gets set to null.
     this.myFeedback =
         resource.getFeedbackForUser(forUser).map(ResourceFeedbackModel::new).orElse(null);
     if (forUser.getIsInstructor()) {
