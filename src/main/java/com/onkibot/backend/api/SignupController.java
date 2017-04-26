@@ -41,8 +41,8 @@ public class SignupController {
           new UsernamePasswordAuthenticationToken(signupInfo.getEmail(), signupInfo.getPassword());
       SecurityContextHolder.getContext()
           .setAuthentication(authenticationManager.authenticate(authentication));
+      OnkibotBackendApplication.setSessionUser(user, session);
       UserDetailModel userModel = new UserDetailModel(user);
-      session.setAttribute("user", userModel);
       return new ResponseEntity<>(userModel, HttpStatus.CREATED);
     } else {
       throw new EmailInUseException(signupInfo.getEmail());
