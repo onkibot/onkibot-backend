@@ -59,7 +59,7 @@ public class SignupController {
     SecurityContextHolder.getContext()
         .setAuthentication(authenticationManager.authenticate(authentication));
     UserDetailModel userModel = new UserDetailModel(user);
-    session.setAttribute("user", userModel);
+    OnkibotBackendApplication.setSessionUser(user, session);
     // Return the UserDetailModel of the User.
     return new ResponseEntity<>(userModel, HttpStatus.CREATED);
   }
