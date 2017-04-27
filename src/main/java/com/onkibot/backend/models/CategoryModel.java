@@ -1,9 +1,11 @@
 package com.onkibot.backend.models;
 
 import com.onkibot.backend.database.entities.Category;
+import com.onkibot.backend.database.entities.User;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/** This class is used to serializer a {@link Category}. */
 public class CategoryModel {
   private int categoryId;
   private int courseId;
@@ -13,13 +15,17 @@ public class CategoryModel {
 
   protected CategoryModel() {}
 
-  public CategoryModel(Category category) {
+  public CategoryModel(Category category, User forUser) {
     this.categoryId = category.getCategoryId();
     this.courseId = category.getCourse().getCourseId();
     this.name = category.getName();
     this.description = category.getDescription();
     this.resources =
-        category.getResources().stream().map(ResourceModel::new).collect(Collectors.toList());
+        category
+            .getResources()
+            .stream()
+            .map(resource -> new ResourceModel(resource, forUser))
+            .collect(Collectors.toList());
   }
 
   public int getCategoryId() {

@@ -91,6 +91,7 @@ public class SignupControllerTest {
     assertEquals(signupInfoModel.getIsInstructor(), responseUserModel.getIsInstructor());
     assertTrue(responseUserModel.getAttending().isEmpty());
     assertTrue(responseUserModel.getResources().isEmpty());
+    assertTrue(responseUserModel.getExternalResources().isEmpty());
   }
 
   @Test

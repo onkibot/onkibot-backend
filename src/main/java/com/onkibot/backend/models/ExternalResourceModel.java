@@ -1,22 +1,30 @@
 package com.onkibot.backend.models;
 
 import com.onkibot.backend.database.entities.ExternalResource;
+import com.onkibot.backend.database.entities.User;
 
+/** This class is used to serializer a {@link ExternalResource}. */
 public class ExternalResourceModel {
   private int externalResourceId;
   private int resourceId;
+  private String title;
+  private String comment;
   private String url;
   private UserModel publisherUser;
-  private boolean hasApproved;
+  private int approvalCount;
+  private boolean myApproval;
 
   protected ExternalResourceModel() {}
 
-  public ExternalResourceModel(ExternalResource externalResource, boolean hasApproved) {
+  public ExternalResourceModel(ExternalResource externalResource, User forUser) {
     this.externalResourceId = externalResource.getExternalResourceId();
     this.resourceId = externalResource.getResource().getResourceId();
+    this.title = externalResource.getTitle();
+    this.comment = externalResource.getComment();
     this.url = externalResource.getUrl();
     this.publisherUser = new UserModel(externalResource.getPublisherUser());
-    this.hasApproved = hasApproved;
+    this.approvalCount = externalResource.getUserApprovalsCount();
+    this.myApproval = externalResource.hasUserApproved(forUser);
   }
 
   public int getExternalResourceId() {
@@ -27,6 +35,14 @@ public class ExternalResourceModel {
     return resourceId;
   }
 
+  public String getTitle() {
+    return title;
+  }
+
+  public String getComment() {
+    return comment;
+  }
+
   public String getUrl() {
     return url;
   }
@@ -35,7 +51,11 @@ public class ExternalResourceModel {
     return publisherUser;
   }
 
-  public boolean getHasApproved() {
-    return hasApproved;
+  public int getApprovalCount() {
+    return approvalCount;
+  }
+
+  public boolean getMyApproval() {
+    return myApproval;
   }
 }

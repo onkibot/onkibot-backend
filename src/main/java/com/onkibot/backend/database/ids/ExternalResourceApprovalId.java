@@ -1,12 +1,18 @@
 package com.onkibot.backend.database.ids;
 
 import com.onkibot.backend.database.entities.ExternalResource;
+import com.onkibot.backend.database.entities.ExternalResourceApproval;
 import com.onkibot.backend.database.entities.User;
 import java.io.Serializable;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+/**
+ * This is a Composite key for the {@link ExternalResourceApproval} entity.
+ *
+ * <p>It makes sure a {@link User} only can approve a {@link ExternalResource} once.
+ */
 @Embeddable
 public class ExternalResourceApprovalId implements Serializable {
   @ManyToOne

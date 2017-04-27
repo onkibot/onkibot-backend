@@ -79,6 +79,8 @@ public class SessionControllerTest {
     assertEquals(user.getIsInstructor(), responseUserModel.getIsInstructor());
     assertEquals(user.getAttending().size(), responseUserModel.getAttending().size());
     assertEquals(user.getResources().size(), responseUserModel.getResources().size());
+    assertEquals(
+        user.getExternalResources().size(), responseUserModel.getExternalResources().size());
 
     // Get the current session
     MvcResult sessionResult =
@@ -109,7 +111,7 @@ public class SessionControllerTest {
     MvcResult sessionResult =
         this.mockMvc
             .perform(get(API_URL).session(this.mockHttpSession).accept(MediaType.ALL))
-            .andExpect(status().isOk())
+            .andExpect(status().isNotFound())
             .andReturn();
 
     String jsonString = sessionResult.getResponse().getContentAsString();

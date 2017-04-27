@@ -93,4 +93,3 @@ jacocoTestReport {
         csv.enabled false
     }
 }
-

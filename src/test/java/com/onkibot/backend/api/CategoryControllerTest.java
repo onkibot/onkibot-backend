@@ -133,6 +133,8 @@ public class CategoryControllerTest {
   @Test
   @WithMockUser(authorities = {"USER"})
   public void testGetCategoryWithAuthentication() throws Exception {
+    User publisherUser = createRepositoryUser();
+    MockHttpSession mockHttpSession = getAuthenticatedSession(publisherUser);
     Course course = createRepositoryCourse();
     Category category = createRepositoryCategory(course);
 
@@ -146,6 +148,7 @@ public class CategoryControllerTest {
                         + API_PATH
                         + "/"
                         + category.getCategoryId())
+                    .session(mockHttpSession)
                     .accept(MediaType.ALL))
             .andExpect(status().isOk())
             .andReturn();
@@ -171,6 +174,8 @@ public class CategoryControllerTest {
   @Test
   @WithMockUser(authorities = {"USER"})
   public void testGetCategoriesWithAuthentication() throws Exception {
+    User publisherUser = createRepositoryUser();
+    MockHttpSession mockHttpSession = getAuthenticatedSession(publisherUser);
     Course course = createRepositoryCourse();
     Category category1 = createRepositoryCategory(course);
     Category category2 = createRepositoryCategory(course);
@@ -179,6 +184,7 @@ public class CategoryControllerTest {
         this.mockMvc
             .perform(
                 get(API_URL_COURSE + "/" + course.getCourseId() + "/" + API_PATH)
+                    .session(mockHttpSession)
                     .accept(MediaType.ALL))
             .andExpect(status().isOk())
             .andReturn();
@@ -190,10 +196,6 @@ public class CategoryControllerTest {
         mapper.readValue(jsonString, new TypeReference<List<CategoryModel>>() {});
 
     assertEquals(responseCategories.size(), 2);
-
-    for (CategoryModel catModel : responseCategories) {
-      System.out.println(catModel.getCategoryId() + " - " + catModel.getCourseId() + " - DERP");
-    }
 
     assertResponseModel(category1, responseCategories.get(0));
     assertResponseModel(category2, responseCategories.get(1));
@@ -222,6 +224,8 @@ public class CategoryControllerTest {
   public void testCreateCategoryWithAuthentication() throws Exception {
     ObjectMapper mapper = new ObjectMapper();
 
+    User publisherUser = createRepositoryUser();
+    MockHttpSession mockHttpSession = getAuthenticatedSession(publisherUser);
     Course course = createRepositoryCourse();
 
     CategoryInputModel categoryInputModel =
@@ -233,6 +237,7 @@ public class CategoryControllerTest {
                 post(API_URL_COURSE + "/" + course.getCourseId() + "/" + API_PATH)
                     .content(mapper.writeValueAsString(categoryInputModel))
                     .contentType(MediaType.APPLICATION_JSON)
+                    .session(mockHttpSession)
                     .accept(MediaType.ALL))
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
@@ -275,18 +280,6 @@ public class CategoryControllerTest {
     MockHttpSession session = getAuthenticatedSession(user);
     Course course = createRepositoryCourse(user);
     Category category = createRepositoryCategory(course);
-
-    System.out.println("Current categoryID: " + category.getCategoryId());
-    System.out.println("Current courseId: " + category.getCourse().getCourseId());
-
-    for (Category innerCategory : categoryRepository.findAll()) {
-      System.out.println(
-          "CategoryID:"
-              + innerCategory.getCategoryId()
-              + " - "
-              + innerCategory.getCourse().getCourseId());
-    }
-
     this.mockMvc
         .perform(
             delete(
